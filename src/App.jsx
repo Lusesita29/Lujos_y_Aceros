@@ -1,19 +1,13 @@
-/* --- CÓDIGO OPTIMIZADO PARA RESPONSIVE Y CARDS REDUCIDAS --- */
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  FaWhatsapp,
-  FaShoppingCart,
-  FaPlus,
-  FaMinus,
-  FaTrash,
-} from 'react-icons/fa';
+import { FaWhatsapp, FaShoppingCart, FaPlus, FaMinus, FaTrash, FaChevronDown } from 'react-icons/fa';
 
 function App() {
   const [carrito, setCarrito] = useState([]);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
   const [categoriaActiva, setCategoriaActiva] = useState("todos");
+  const [dropdownAbierto, setDropdownAbierto] = useState(false); // Para el menú móvil
 
   // === PRODUCTOS ===
   const productos = [
@@ -46,7 +40,7 @@ function App() {
     ? productos
     : productos.filter(p => p.categoria === categoriaActiva);
 
-  // === CARRITO ===
+  // === FUNCIONES CARRITO
   const agregarAlCarrito = (producto) => {
     setCarrito((prev) => {
       const existe = prev.find((item) => item.id === producto.id);
@@ -62,7 +56,9 @@ function App() {
   const cambiarCantidad = (id, delta) => {
     setCarrito((prev) =>
       prev
-        .map((item) => item.id === id ? { ...item, cantidad: Math.max(1, item.cantidad + delta) } : item)
+        .map((item) =>
+          item.id === id ? { ...item, cantidad: Math.max(1, item.cantidad + delta) } : item
+        )
         .filter((item) => item.cantidad > 0)
     );
   };
@@ -98,7 +94,6 @@ function App() {
           <img src="/logo.jpg" alt="Aceros y Lujos" className="w-56 md:w-72 mb-6 mx-auto" />
           <h1 className="text-4xl md:text-7xl font-black text-black mb-4">INOXIDABLES</h1>
           <p className="text-lg md:text-2xl text-gray-700 mb-6">Accesorios Premium para Camiones</p>
-
           <a
             href="#categorias"
             className="bg-green-700 text-white font-bold px-10 py-4 rounded-full text-lg hover:bg-green-800 transition inline-block shadow-xl"
@@ -108,15 +103,17 @@ function App() {
         </motion.div>
       </section>
 
-      {/* CATEGORÍAS */}
-      <section id="categorias" className="py-8 bg-gray-100 sticky top-0 z-30 shadow-md">
+      {/* MENÚ DE CATEGORÍAS - DESKTOP + DROPDOWN MÓVIL */}
+      <section id="categorias" className="py-6 bg-gray-100 sticky top-0 z-30 shadow-md">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex gap-3 overflow-x-auto pb-2">
+
+          {/* Versión Desktop: Botones horizontales */}
+          <div className="hidden md:flex gap-3 overflow-x-auto pb-2 justify-center">
             {categorias.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setCategoriaActiva(cat.id)}
-                className={`px-5 py-2 rounded-full font-semibold whitespace-nowrap transition ${
+                className={`px-6 py-3 rounded-full font-semibold transition whitespace-nowrap ${
                   categoriaActiva === cat.id
                     ? "bg-green-700 text-white"
                     : "bg-white text-black hover:bg-green-700 hover:text-white"
@@ -125,6 +122,41 @@ function App() {
                 {cat.nombre}
               </button>
             ))}
+          </div>
+
+          {/* Versión Móvil: Dropdown */}
+          <div className="md:hidden relative">
+            <button
+              onClick={() => setDropdownAbierto(!dropdownAbierto)}
+              className="w-full bg-white px-6 py-4 rounded-xl font-bold flex items-center justify-between shadow-md"
+            >
+              {categorias.find(c => c.id === categoriaActiva)?.nombre || "Selecciona categoría"}
+              <FaChevronDown className={`transition ${dropdownAbierto ? "rotate-180" : ""}`} />
+            </button>
+
+            <AnimatePresence>
+              {dropdownAbierto && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full left-0 right-0 bg-white rounded-xl shadow-2xl mt-2 overflow-hidden z-40"
+                >
+                  {categorias.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => {
+                        setCategoriaActiva(cat.id);
+                        setDropdownAbierto(false);
+                      }}
+                      className="w-full text-left px-6 py-4 hover:bg-green-100 transition font-medium"
+                    >
+                      {cat.nombre}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </section>
@@ -136,27 +168,32 @@ function App() {
             {categoriaActiva === "todos" ? "Todos los Productos" : categorias.find(c => c.id === categoriaActiva)?.nombre}
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {productosFiltrados.map((prod, i) => (
               <motion.div
                 key={prod.id}
-                initial={{ opacity: 0, y: 60 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-2"
               >
-                <img src={prod.img} alt={prod.nombre} className="w-full h-48 object-cover" />
-
-                <div className="p-4">
-                  <h3 className="text-xl font-bold text-black mb-2">{prod.nombre}</h3>
-                  <p className="text-green-700 text-2xl font-black mb-4">
+                <img
+                  src={prod.img}
+                  alt={prod.nombre}
+                  className="w-full h-32 sm:h-40 object-cover"
+                />
+                <div className="p-3 sm:p-4">
+                  <h3 className="text-sm sm:text-base font-bold text-black line-clamp-2">
+                    {prod.nombre}
+                  </h3>
+                  <p className="text-green-700 text-lg sm:text-xl font-black mt-2">
                     ${prod.precio.toLocaleString()} COP
                   </p>
                   <button
                     onClick={() => agregarAlCarrito(prod)}
-                    className="w-full bg-green-700 text-white font-bold py-3 rounded-full text-base hover:bg-green-800 transition flex items-center justify-center gap-2"
+                    className="w-full bg-green-700 text-white font-bold py-2.5 mt-3 rounded-lg text-sm hover:bg-green-800 transition flex items-center justify-center gap-2"
                   >
-                    <FaShoppingCart /> Añadir al Carrito
+                    <FaShoppingCart /> Añadir
                   </button>
                 </div>
               </motion.div>
@@ -165,10 +202,10 @@ function App() {
         </div>
       </section>
 
-      {/* BOTÓN CARRITO */}
+      {/* BOTÓN CARRITO FIJO */}
       <button
         onClick={() => setCarritoAbierto(true)}
-        className="fixed bottom-20 right-5 bg-green-700 text-white p-5 rounded-full shadow-2xl z-40"
+        className="fixed bottom-20 right-5 bg-green-700 text-white p-5 rounded-full shadow-2xl z-40 hover:bg-green-800 transition"
       >
         <FaShoppingCart size={26} />
         {totalProductos > 0 && (
@@ -207,26 +244,32 @@ function App() {
                   {carrito.map((item) => (
                     <div key={item.id} className="flex gap-4 mb-5 pb-4 border-b">
                       <img src={item.img} alt={item.nombre} className="w-20 h-20 object-cover rounded" />
-
                       <div className="flex-grow">
-                        <h4 className="font-semibold">{item.nombre}</h4>
+                        <h4 className="font-semibold text-sm">{item.nombre}</h4>
                         <p className="text-green-700 font-bold text-lg">
                           ${(item.precio * item.cantidad).toLocaleString()} COP
                         </p>
                       </div>
-
                       <div className="flex flex-col items-center">
                         <div className="flex items-center gap-2">
-                          <button onClick={() => cambiarCantidad(item.id, -1)} className="bg-gray-200 p-2 rounded">
+                          <button
+                            onClick={() => cambiarCantidad(item.id, -1)}
+                            className="bg-gray-200 p-2 rounded"
+                          >
                             <FaMinus />
                           </button>
-                          <span className="font-bold">{item.cantidad}</span>
-                          <button onClick={() => cambiarCantidad(item.id, 1)} className="bg-green-700 text-white p-2 rounded">
+                          <span className="font-bold w-8 text-center">{item.cantidad}</span>
+                          <button
+                            onClick={() => cambiarCantidad(item.id, 1)}
+                            className="bg-green-700 text-white p-2 rounded"
+                          >
                             <FaPlus />
                           </button>
                         </div>
-
-                        <button onClick={() => eliminarDelCarrito(item.id)} className="text-red-600 mt-2">
+                        <button
+                          onClick={() => eliminarDelCarrito(item.id)}
+                          className="text-red-600 mt-2"
+                        >
                           <FaTrash />
                         </button>
                       </div>

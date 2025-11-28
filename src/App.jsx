@@ -1,4 +1,4 @@
-/* --- VERSIÓN MEJORADA: MENÚ DESPLEGABLE + CARDS MÁS PEQUEÑAS --- */
+/* --- VERSIÓN FINAL: VERDE NEÓN FOSFORESCENTE + MENÚ DESPLEGABLE EN TODOS LOS DISPOSITIVOS --- */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaWhatsapp, FaShoppingCart, FaPlus, FaMinus, FaTrash, FaChevronDown } from 'react-icons/fa';
@@ -7,7 +7,7 @@ function App() {
   const [carrito, setCarrito] = useState([]);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
   const [categoriaActiva, setCategoriaActiva] = useState("todos");
-  const [dropdownAbierto, setDropdownAbierto] = useState(false); // Para el menú móvil
+  const [dropdownAbierto, setDropdownAbierto] = useState(false);
 
   // === PRODUCTOS ===
   const productos = [
@@ -40,7 +40,7 @@ function App() {
     ? productos
     : productos.filter(p => p.categoria === categoriaActiva);
 
-  // === FUNCIONES CARRITO
+  // === FUNCIONES CARRITO (sin cambios) ===
   const agregarAlCarrito = (producto) => {
     setCarrito((prev) => {
       const existe = prev.find((item) => item.id === producto.id);
@@ -73,7 +73,7 @@ function App() {
   const enviarAWhatsApp = () => {
     if (carrito.length === 0) return;
 
-    let mensaje = `*¡Hola Aceros y Lujos!* \n\nQuiero cotizar lo siguiente:\n\n`;
+    let mensaje = `*¡Hola Acerc y Lujos!* \n\nQuiero cotizar lo siguiente:\n\n`;
     carrito.forEach((item) => {
       mensaje += `• ${item.nombre}\n  Cantidad: ${item.cantidad} → $${(item.precio * item.cantidad).toLocaleString()} COP\n\n`;
     });
@@ -96,51 +96,37 @@ function App() {
           <p className="text-lg md:text-2xl text-gray-700 mb-6">Accesorios Premium para Camiones</p>
           <a
             href="#categorias"
-            className="bg-green-700 text-white font-bold px-10 py-4 rounded-full text-lg hover:bg-green-800 transition inline-block shadow-xl"
+            className="bg-[#39FF14] text-black font-bold px-10 py-4 rounded-full text-lg shadow-xl hover:shadow-[0_0_30px_#39FF14] transition inline-block transform hover:scale-105"
+            style={{ boxShadow: '0 0 20px rgba(57,255,20,0.8)' }}
           >
             Ver Catálogo
           </a>
         </motion.div>
       </section>
 
-      {/* MENÚ DE CATEGORÍAS - DESKTOP + DROPDOWN MÓVIL */}
-      <section id="categorias" className="py-6 bg-gray-100 sticky top-0 z-30 shadow-md">
+      {/* MENÚ DE CATEGORÍAS - AHORA CON DROPDOWN EN TODOS LOS DISPOSITIVOS (OPCIONAL EN ESCRITORIO) */}
+      <section id="categorias" className="py-6 bg-black sticky top-0 z-30 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4">
 
-          {/* Versión Desktop: Botones horizontales */}
-          <div className="hidden md:flex gap-3 overflow-x-auto pb-2 justify-center">
-            {categorias.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setCategoriaActiva(cat.id)}
-                className={`px-6 py-3 rounded-full font-semibold transition whitespace-nowrap ${
-                  categoriaActiva === cat.id
-                    ? "bg-green-700 text-white"
-                    : "bg-white text-black hover:bg-green-700 hover:text-white"
-                }`}
-              >
-                {cat.nombre}
-              </button>
-            ))}
-          </div>
-
-          {/* Versión Móvil: Dropdown */}
-          <div className="md:hidden relative">
+          {/* Dropdown principal - ahora visible en móvil y escritorio (puedes ocultarlo en desktop si quieres) */}
+          <div className="relative">
             <button
               onClick={() => setDropdownAbierto(!dropdownAbierto)}
-              className="w-full bg-white px-6 py-4 rounded-xl font-bold flex items-center justify-between shadow-md"
+              className="w-full bg-[#39FF14] text-black px-8 py-5 rounded-2xl font-bold flex items-center justify-between shadow-2xl hover:shadow-[0_0_40px_#39FF14] transition text-lg md:text-xl"
+              style={{ boxShadow: '0 0 30px rgba(57,255,20,0.9)' }}
             >
-              {categorias.find(c => c.id === categoriaActiva)?.nombre || "Selecciona categoría"}
-              <FaChevronDown className={`transition ${dropdownAbierto ? "rotate-180" : ""}`} />
+              <span>{categorias.find(c => c.id === categoriaActiva)?.nombre || "Selecciona categoría"}</span>
+              <FaChevronDown className={`text-2xl transition ${dropdownAbierto ? "rotate-180" : ""}`} />
             </button>
 
             <AnimatePresence>
               {dropdownAbierto && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: -15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute top-full left-0 right-0 bg-white rounded-xl shadow-2xl mt-2 overflow-hidden z-40"
+                  exit={{ opacity: 0, y: -15 }}
+                  className="absolute top-full left-0 right-0 bg-black border-2 border-[#39FF14] rounded-2xl shadow-2xl mt-3 overflow-hidden z-40"
+                  style={{ boxShadow: '0 0 40px rgba(57,255,20,0.8)' }}
                 >
                   {categorias.map((cat) => (
                     <button
@@ -149,7 +135,11 @@ function App() {
                         setCategoriaActiva(cat.id);
                         setDropdownAbierto(false);
                       }}
-                      className="w-full text-left px-6 py-4 hover:bg-green-100 transition font-medium"
+                      className={`w-full text-left px-8 py-5 transition font-semibold text-lg ${
+                        categoriaActiva === cat.id
+                          ? "bg-[#39FF14] text-black shadow-[0_0_20px_#39FF14]"
+                          : "text-white hover:bg-[#39FF14] hover:text-black hover:shadow-[0_0_25px_#39FF14]"
+                      }`}
                     >
                       {cat.nombre}
                     </button>
@@ -158,13 +148,31 @@ function App() {
               )}
             </AnimatePresence>
           </div>
+
+          {/* Botones horizontales solo en pantallas grandes (opcional) */}
+          <div className="hidden lg:flex gap-4 mt-6 justify-center flex-wrap">
+            {categorias.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setCategoriaActiva(cat.id)}
+                className={`px-8 py-4 rounded-full font-bold transition ${
+                  categoriaActiva === cat.id
+                    ? "bg-[#39FF14] text-black shadow-[0_0_30px_#39FF14]"
+                    : "bg-gray-800 text-white hover:bg-[#39FF14] hover:text-black hover:shadow-[0_0_30px_#39FF14]"
+                }`}
+                style={{ boxShadow: categoriaActiva === cat.id ? '0 0 30px rgba(57,255,20,1)' : '' }}
+              >
+                {cat.nombre}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* PRODUCTOS - CARDS MÁS PEQUEÑAS */}
+      {/* PRODUCTOS */}
       <section className="py-10 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl text-center mb-10 font-black text-green-800">
+          <h2 className="text-3xl md:text-5xl text-center mb-10 font-black text-[#39FF14] drop-shadow-lg">
             {categoriaActiva === "todos" ? "Todos los Productos" : categorias.find(c => c.id === categoriaActiva)?.nombre}
           </h2>
 
@@ -186,12 +194,13 @@ function App() {
                   <h3 className="text-sm sm:text-base font-bold text-black line-clamp-2">
                     {prod.nombre}
                   </h3>
-                  <p className="text-green-700 text-lg sm:text-xl font-black mt-2">
+                  <p className="text-[#39FF14] text-lg sm:text-xl font-black mt-2 drop-shadow">
                     ${prod.precio.toLocaleString()} COP
                   </p>
                   <button
                     onClick={() => agregarAlCarrito(prod)}
-                    className="w-full bg-green-700 text-white font-bold py-2.5 mt-3 rounded-lg text-sm hover:bg-green-800 transition flex items-center justify-center gap-2"
+                    className="w-full bg-[#39FF14] text-black font-bold py-2.5 mt-3 rounded-lg text-sm hover:shadow-[0_0_25px_#39FF14] transition flex items-center justify-center gap-2"
+                    style={{ boxShadow: '0 4px 15px rgba(57,255,20,0.6)' }}
                   >
                     <FaShoppingCart /> Añadir
                   </button>
@@ -205,7 +214,8 @@ function App() {
       {/* BOTÓN CARRITO FIJO */}
       <button
         onClick={() => setCarritoAbierto(true)}
-        className="fixed bottom-20 right-5 bg-green-700 text-white p-5 rounded-full shadow-2xl z-40 hover:bg-green-800 transition"
+        className="fixed bottom-20 right-5 bg-[#39FF14] text-black p-5 rounded-full shadow-2xl z-40 hover:shadow-[0_0_40px_#39FF14] transition-all"
+        style={{ boxShadow: '0 0 40px rgba(57,255,20,1)' }}
       >
         <FaShoppingCart size={26} />
         {totalProductos > 0 && (
@@ -222,7 +232,7 @@ function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-end"
+            className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-end"
             onClick={() => setCarritoAbierto(false)}
           >
             <motion.div
@@ -233,7 +243,7 @@ function App() {
               className="bg-white w-full max-w-lg rounded-t-3xl p-5 max-h-[80vh] overflow-y-auto mx-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-2xl font-black text-green-700 mb-4 text-center">
+              <h3 className="text-2xl font-black text-[#39FF14] mb-4 text-center drop-shadow">
                 Mi Pedido ({totalProductos})
               </h3>
 
@@ -246,44 +256,30 @@ function App() {
                       <img src={item.img} alt={item.nombre} className="w-20 h-20 object-cover rounded" />
                       <div className="flex-grow">
                         <h4 className="font-semibold text-sm">{item.nombre}</h4>
-                        <p className="text-green-700 font-bold text-lg">
+                        <p className="text-[#39FF14] font-bold text-lg drop-shadow">
                           ${(item.precio * item.cantidad).toLocaleString()} COP
                         </p>
                       </div>
                       <div className="flex flex-col items-center">
                         <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => cambiarCantidad(item.id, -1)}
-                            className="bg-gray-200 p-2 rounded"
-                          >
-                            <FaMinus />
-                          </button>
+                          <button onClick={() => cambiarCantidad(item.id, -1)} className="bg-gray-200 p-2 rounded"><FaMinus /></button>
                           <span className="font-bold w-8 text-center">{item.cantidad}</span>
-                          <button
-                            onClick={() => cambiarCantidad(item.id, 1)}
-                            className="bg-green-700 text-white p-2 rounded"
-                          >
-                            <FaPlus />
-                          </button>
+                          <button onClick={() => cambiarCantidad(item.id, 1)} className="bg-[#39FF14] text-black p-2 rounded shadow-lg"><FaPlus /></button>
                         </div>
-                        <button
-                          onClick={() => eliminarDelCarrito(item.id)}
-                          className="text-red-600 mt-2"
-                        >
-                          <FaTrash />
-                        </button>
+                        <button onClick={() => eliminarDelCarrito(item.id)} className="text-red-600 mt-2"><FaTrash /></button>
                       </div>
                     </div>
                   ))}
 
                   <div className="mt-5 pt-4 border-t text-xl font-black flex justify-between">
                     <span>Total:</span>
-                    <span className="text-green-700">${total.toLocaleString()} COP</span>
+                    <span className="text-[#39FF14] drop-shadow-lg">${total.toLocaleString()} COP</span>
                   </div>
 
                   <button
                     onClick={enviarAWhatsApp}
-                    className="w-full bg-green-700 text-white font-bold py-4 rounded-full mt-5 flex items-center justify-center gap-3 text-lg"
+                    className="w-full bg-[#39FF14] text-black font-bold py-5 rounded-full mt-5 flex items-center justify-center gap-3 text-lg shadow-2xl hover:shadow-[0_0_40px_#39FF14] transition-all"
+                    style={{ boxShadow: '0 0 30px rgba(57,255,20,0.9)' }}
                   >
                     <FaWhatsapp size={26} /> Enviar Pedido por WhatsApp
                   </button>

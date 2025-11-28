@@ -1,7 +1,7 @@
-/* --- VERSIÓN FINAL: VERDE NEÓN FOSFORESCENTE + MENÚ DESPLEGABLE EN TODOS LOS DISPOSITIVOS --- */
+/* --- VERSIÓN ULTRA OPTIMIZADA + VERDE FOSFORESCENTE --- */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaWhatsapp, FaShoppingCart, FaPlus, FaMinus, FaTrash, FaChevronDown } from 'react-icons/fa';
+import { FaWhatsapp, FaShoppingCart, FaPlus, FaMinus, FaTrash, FaChevronDown, FaBars } from 'react-icons/fa';
 
 function App() {
   const [carrito, setCarrito] = useState([]);
@@ -9,7 +9,7 @@ function App() {
   const [categoriaActiva, setCategoriaActiva] = useState("todos");
   const [dropdownAbierto, setDropdownAbierto] = useState(false);
 
-  // === PRODUCTOS ===
+  // === PRODUCTOS (sin cambios) ===
   const productos = [
     { id: 1, nombre: "Retrovisores Cromados", precio: 850000, img: "/retro.jpg", categoria: "retrovisores y regletas" },
     { id: 2, nombre: "Retrovisor 60 cm", precio: 380000, img: "/retro2.jpg", categoria: "retrovisores y regletas" },
@@ -72,15 +72,13 @@ function App() {
 
   const enviarAWhatsApp = () => {
     if (carrito.length === 0) return;
-
-    let mensaje = `*¡Hola Acerc y Lujos!* \n\nQuiero cotizar lo siguiente:\n\n`;
+    let mensaje = `*¡Hola Aceros y Lujos!* \n\nQuiero cotizar lo siguiente:\n\n`;
     carrito.forEach((item) => {
-      mensaje += `• ${item.nombre}\n  Cantidad: ${item.cantidad} → $${(item.precio * item.cantidad).toLocaleString()} COP\n\n`;
+      mensaje += `• ${item.nombre}\n Cantidad: ${item.cantidad} → $${(item.precio * item.cantidad).toLocaleString()} COP\n\n`;
     });
     mensaje += `─────────────────\n`;
     mensaje += `*TOTAL: $${total.toLocaleString()} COP*\n\n`;
     mensaje += `¡Gracias, quedo pendiente de su respuesta!`;
-
     const telefono = "573001704587";
     const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, "_blank");
@@ -96,86 +94,85 @@ function App() {
           <p className="text-lg md:text-2xl text-gray-700 mb-6">Accesorios Premium para Camiones</p>
           <a
             href="#categorias"
-            className="bg-[#39FF14] text-black font-bold px-10 py-4 rounded-full text-lg shadow-xl hover:shadow-[0_0_30px_#39FF14] transition inline-block transform hover:scale-105"
-            style={{ boxShadow: '0 0 20px rgba(57,255,20,0.8)' }}
+            className="bg-[#00ff9d] text-black font-bold px-10 py-5 rounded-full text-lg shadow-2xl 
+                       hover:bg-[#00cc7a] transition transform hover:scale-105 
+                       shadow-[#00ff9d]/50 glow-button"
           >
             Ver Catálogo
           </a>
         </motion.div>
       </section>
 
-      {/* MENÚ DE CATEGORÍAS - AHORA CON DROPDOWN EN TODOS LOS DISPOSITIVOS (OPCIONAL EN ESCRITORIO) */}
-      <section id="categorias" className="py-6 bg-black sticky top-0 z-30 shadow-2xl">
+      {/* MENÚ DE CATEGORÍAS - NUEVO DISEÑO MÁS COMPACTO */}
+      <section id="categorias" className="py-3 bg-gray-900 sticky top-0 z-30 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4">
-
-          {/* Dropdown principal - ahora visible en móvil y escritorio (puedes ocultarlo en desktop si quieres) */}
-          <div className="relative">
-            <button
-              onClick={() => setDropdownAbierto(!dropdownAbierto)}
-              className="w-full bg-[#39FF14] text-black px-8 py-5 rounded-2xl font-bold flex items-center justify-between shadow-2xl hover:shadow-[0_0_40px_#39FF14] transition text-lg md:text-xl"
-              style={{ boxShadow: '0 0 30px rgba(57,255,20,0.9)' }}
-            >
-              <span>{categorias.find(c => c.id === categoriaActiva)?.nombre || "Selecciona categoría"}</span>
-              <FaChevronDown className={`text-2xl transition ${dropdownAbierto ? "rotate-180" : ""}`} />
-            </button>
-
-            <AnimatePresence>
-              {dropdownAbierto && (
-                <motion.div
-                  initial={{ opacity: 0, y: -15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  className="absolute top-full left-0 right-0 bg-black border-2 border-[#39FF14] rounded-2xl shadow-2xl mt-3 overflow-hidden z-40"
-                  style={{ boxShadow: '0 0 40px rgba(57,255,20,0.8)' }}
-                >
-                  {categorias.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => {
-                        setCategoriaActiva(cat.id);
-                        setDropdownAbierto(false);
-                      }}
-                      className={`w-full text-left px-8 py-5 transition font-semibold text-lg ${
-                        categoriaActiva === cat.id
-                          ? "bg-[#39FF14] text-black shadow-[0_0_20px_#39FF14]"
-                          : "text-white hover:bg-[#39FF14] hover:text-black hover:shadow-[0_0_25px_#39FF14]"
-                      }`}
-                    >
-                      {cat.nombre}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Botones horizontales solo en pantallas grandes (opcional) */}
-          <div className="hidden lg:flex gap-4 mt-6 justify-center flex-wrap">
+          {/* Desktop - Botones más pequeños y con glow */}
+          <div className="hidden md:flex gap-2 flex-wrap justify-center">
             {categorias.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setCategoriaActiva(cat.id)}
-                className={`px-8 py-4 rounded-full font-bold transition ${
-                  categoriaActiva === cat.id
-                    ? "bg-[#39FF14] text-black shadow-[0_0_30px_#39FF14]"
-                    : "bg-gray-800 text-white hover:bg-[#39FF14] hover:text-black hover:shadow-[0_0_30px_#39FF14]"
-                }`}
-                style={{ boxShadow: categoriaActiva === cat.id ? '0 0 30px rgba(57,255,20,1)' : '' }}
+                className={`px-5 py-2.5 rounded-full font-bold text-sm transition-all
+                  ${categoriaActiva === cat.id
+                    ? "bg-[#00ff9d] text-black shadow-lg shadow-[#00ff9d]/60 glow-button"
+                    : "bg-gray-800 text-gray-300 hover:bg-[#00ff9d] hover:text-black hover:shadow-[#00ff9d]/50"
+                  }`}
               >
                 {cat.nombre}
               </button>
             ))}
           </div>
+
+          {/* Móvil - Menú ultra compacto con ícono de hamburguesa */}
+          <div className="md:hidden flex items-center justify-between">
+            <button
+              onClick={() => setDropdownAbierto(!dropdownAbierto)}
+              className="flex items-center gap-3 bg-gray-800 px-5 py-4 rounded-xl w-full font-bold text-white shadow-lg"
+            >
+              <FaBars className="text-[#00ff9d]" />
+              <span className="flex-1 text-left">
+                {categorias.find(c => c.id === categoriaActiva)?.nombre || "Categorías"}
+              </span>
+              <FaChevronDown className={`text-[#00ff9d] transition ${dropdownAbierto ? "rotate-180" : ""}`} />
+            </button>
+          </div>
+
+          {/* Dropdown móvil optimizado */}
+          <AnimatePresence>
+            {dropdownAbierto && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="md:hidden bg-gray-800 rounded-b-xl overflow-hidden shadow-2xl mt-1"
+              >
+                {categorias.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                      setCategoriaActiva(cat.id);
+                      setDropdownAbierto(false);
+                    }}
+                    className={`w-full text-left px-6 py-3.5 text-white font-medium transition
+                      ${categoriaActiva === cat.id ? "bg-[#00ff9d] text-black font-bold" : "hover:bg-gray-700"}
+                    `}
+                  >
+                    {cat.nombre}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
       {/* PRODUCTOS */}
       <section className="py-10 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl text-center mb-10 font-black text-[#39FF14] drop-shadow-lg">
+          <h2 className="text-3xl md:text-5xl text-center mb-10 font-black text-gray-900">
             {categoriaActiva === "todos" ? "Todos los Productos" : categorias.find(c => c.id === categoriaActiva)?.nombre}
           </h2>
-
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {productosFiltrados.map((prod, i) => (
               <motion.div
@@ -185,22 +182,16 @@ function App() {
                 transition={{ delay: i * 0.05 }}
                 className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-2"
               >
-                <img
-                  src={prod.img}
-                  alt={prod.nombre}
-                  className="w-full h-32 sm:h-40 object-cover"
-                />
+                <img src={prod.img} alt={prod.nombre} className="w-full h-32 sm:h-40 object-cover" />
                 <div className="p-3 sm:p-4">
-                  <h3 className="text-sm sm:text-base font-bold text-black line-clamp-2">
-                    {prod.nombre}
-                  </h3>
-                  <p className="text-[#39FF14] text-lg sm:text-xl font-black mt-2 drop-shadow">
+                  <h3 className="text-sm sm:text-base font-bold text-black line-clamp-2">{prod.nombre}</h3>
+                  <p className="text-[#00ff9d] text-lg sm:text-xl font-black mt-2 drop-shadow glow-text">
                     ${prod.precio.toLocaleString()} COP
                   </p>
                   <button
                     onClick={() => agregarAlCarrito(prod)}
-                    className="w-full bg-[#39FF14] text-black font-bold py-2.5 mt-3 rounded-lg text-sm hover:shadow-[0_0_25px_#39FF14] transition flex items-center justify-center gap-2"
-                    style={{ boxShadow: '0 4px 15px rgba(57,255,20,0.6)' }}
+                    className="w-full bg-[#00ff9d] text-black font-bold py-2.5 mt-3 rounded-lg text-sm 
+                               hover:bg-[#00cc7a] transition glow-button flex items-center justify-center gap-2"
                   >
                     <FaShoppingCart /> Añadir
                   </button>
@@ -211,15 +202,15 @@ function App() {
         </div>
       </section>
 
-      {/* BOTÓN CARRITO FIJO */}
+      {/* BOTÓN CARRITO FIJO - AHORA FOSFORESCENTE */}
       <button
         onClick={() => setCarritoAbierto(true)}
-        className="fixed bottom-20 right-5 bg-[#39FF14] text-black p-5 rounded-full shadow-2xl z-40 hover:shadow-[0_0_40px_#39FF14] transition-all"
-        style={{ boxShadow: '0 0 40px rgba(57,255,20,1)' }}
+        className="fixed bottom-20 right-5 bg-[#00ff9d] text-black p-5 rounded-full shadow-2xl z-40 
+                   hover:bg-[#00cc7a] transition transform hover:scale-110 glow-button"
       >
-        <FaShoppingCart size={26} />
+        <FaShoppingCart size={28} />
         {totalProductos > 0 && (
-          <span className="absolute -top-3 -right-3 bg-black text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">
+          <span className="absolute -top-3 -right-3 bg-black text-[#00ff9d] rounded-full w-9 h-9 flex items-center justify-center font-bold text-sm shadow-lg">
             {totalProductos}
           </span>
         )}
@@ -232,7 +223,7 @@ function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-end"
+            className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-end"
             onClick={() => setCarritoAbierto(false)}
           >
             <motion.div
@@ -243,10 +234,9 @@ function App() {
               className="bg-white w-full max-w-lg rounded-t-3xl p-5 max-h-[80vh] overflow-y-auto mx-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-2xl font-black text-[#39FF14] mb-4 text-center drop-shadow">
+              <h3 className="text-2xl font-black text-[#00ff9d] mb-4 text-center drop-shadow glow-text">
                 Mi Pedido ({totalProductos})
               </h3>
-
               {carrito.length === 0 ? (
                 <p className="text-center text-gray-500 py-10 text-lg">Tu carrito está vacío</p>
               ) : (
@@ -256,32 +246,29 @@ function App() {
                       <img src={item.img} alt={item.nombre} className="w-20 h-20 object-cover rounded" />
                       <div className="flex-grow">
                         <h4 className="font-semibold text-sm">{item.nombre}</h4>
-                        <p className="text-[#39FF14] font-bold text-lg drop-shadow">
+                        <p className="text-[#00ff9d] font-bold text-lg drop-shadow glow-text">
                           ${(item.precio * item.cantidad).toLocaleString()} COP
                         </p>
                       </div>
-                      <div className="flex flex-col items-center">
+                      <div className="flex flex-col items-center gap-2">
                         <div className="flex items-center gap-2">
                           <button onClick={() => cambiarCantidad(item.id, -1)} className="bg-gray-200 p-2 rounded"><FaMinus /></button>
                           <span className="font-bold w-8 text-center">{item.cantidad}</span>
-                          <button onClick={() => cambiarCantidad(item.id, 1)} className="bg-[#39FF14] text-black p-2 rounded shadow-lg"><FaPlus /></button>
+                          <button onClick={() => cambiarCantidad(item.id, 1)} className="bg-[#00ff9d] text-black p-2 rounded"><FaPlus /></button>
                         </div>
-                        <button onClick={() => eliminarDelCarrito(item.id)} className="text-red-600 mt-2"><FaTrash /></button>
+                        <button onClick={() => eliminarDelCarrito(item.id)} className="text-red-600"><FaTrash /></button>
                       </div>
                     </div>
                   ))}
-
                   <div className="mt-5 pt-4 border-t text-xl font-black flex justify-between">
                     <span>Total:</span>
-                    <span className="text-[#39FF14] drop-shadow-lg">${total.toLocaleString()} COP</span>
+                    <span className="text-[#00ff9d] drop-shadow glow-text">${total.toLocaleString()} COP</span>
                   </div>
-
                   <button
                     onClick={enviarAWhatsApp}
-                    className="w-full bg-[#39FF14] text-black font-bold py-5 rounded-full mt-5 flex items-center justify-center gap-3 text-lg shadow-2xl hover:shadow-[0_0_40px_#39FF14] transition-all"
-                    style={{ boxShadow: '0 0 30px rgba(57,255,20,0.9)' }}
+                    className="w-full bg-[#00ff9d] text-black font-bold py-5 rounded-full mt-5 flex items-center justify-center gap-3 text-lg glow-button"
                   >
-                    <FaWhatsapp size={26} /> Enviar Pedido por WhatsApp
+                    <FaWhatsapp size={28} /> Enviar Pedido por WhatsApp
                   </button>
                 </>
               )}
@@ -289,6 +276,21 @@ function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* CSS personalizado para el efecto fosforescente */}
+      <style jsx>{`
+        .glow-button {
+          box-shadow: 0 0 20px rgba(0, 255, 157, 0.6);
+          animation: pulse-glow 2s infinite alternate;
+        }
+        .glow-text {
+          text-shadow: 0 0 10px rgba(0, 255, 157, 0.8);
+        }
+        @keyframes pulse-glow {
+          from { box-shadow: 0 0 15px rgba(0, 255, 157, 0.5); }
+          to { box-shadow: 0 0 30px rgba(0, 255, 157, 0.9); }
+        }
+      `}</style>
 
       <footer className="py-8 bg-black text-white text-center text-sm">
         © 2025 Aceros y Lujos • Soledad, Colombia

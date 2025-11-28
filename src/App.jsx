@@ -1,4 +1,4 @@
-/* --- PRECIOS EN NEGRO + BOTONES VERDE FOSFORESCENTE RGB(8,255,8) --- */
+
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaWhatsapp, FaShoppingCart, FaPlus, FaMinus, FaTrash, FaChevronDown, FaBars } from 'react-icons/fa';
@@ -9,7 +9,7 @@ function App() {
   const [categoriaActiva, setCategoriaActiva] = useState("todos");
   const [dropdownAbierto, setDropdownAbierto] = useState(false);
 
-  // === PRODUCTOS (sin cambios) ===
+  // === PRODUCTOS ===
   const productos = [
     { id: 1, nombre: "Retrovisores Cromados", precio: 850000, img: "/retro.jpg", categoria: "retrovisores y regletas" },
     { id: 2, nombre: "Retrovisor 60 cm", precio: 380000, img: "/retro2.jpg", categoria: "retrovisores y regletas" },
@@ -184,7 +184,6 @@ function App() {
                 <img src={prod.img} alt={prod.nombre} className="w-full h-32 sm:h-40 object-cover" />
                 <div className="p-3 sm:p-4">
                   <h3 className="text-sm sm:text-base font-bold text-black line-clamp-2">{prod.nombre}</h3>
-                  {/* PRECIO AHORA EN NEGRO Y MÁS LEGIBLE */}
                   <p className="text-black text-lg sm:text-xl font-black mt-2">
                     ${prod.precio.toLocaleString()} COP
                   </p>
@@ -202,7 +201,7 @@ function App() {
         </div>
       </section>
 
-      {/* BOTÓN CARRITO FIJO */}
+      {/* BOTÓN CARRITO */}
       <button
         onClick={() => setCarritoAbierto(true)}
         className="fixed bottom-20 right-5 bg-[rgb(8,255,8)] text-black p-5 rounded-full shadow-2xl z-40 
@@ -246,7 +245,6 @@ function App() {
                       <img src={item.img} alt={item.nombre} className="w-20 h-20 object-cover rounded" />
                       <div className="flex-grow">
                         <h4 className="font-semibold text-sm">{item.nombre}</h4>
-                        {/* PRECIO EN EL CARRITO TAMBIÉN EN NEGRO PARA MEJOR LEGIBILIDAD */}
                         <p className="text-black font-bold text-lg">
                           ${(item.precio * item.cantidad).toLocaleString()} COP
                         </p>
@@ -278,7 +276,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* EFECTO FOSFORESCENTE (solo para botones) */}
+      
       <style jsx>{`
         .glow-button {
           box-shadow: 0 0 30px rgba(8, 255, 8, 0.8);

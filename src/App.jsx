@@ -16,8 +16,8 @@ function App() {
   // === TODOS LOS PRODUCTOS CATEGORIZADOS ===
   const productos = [
     // RETROVISORS Y REGLETAS
-    { id: 1, nombre: "Retrovisores Cromados", precio: 850000, img: "/public/retro.jpg", categoria: "retrovisores y regletas" },
-    { id: 2, nombre: "Retrovisor 60 cm", precio: 380000, img: "/public/retro2.jpg", categoria: "retrovisores y regletas" },
+    { id: 1, nombre: "Retrovisores Cromados", precio: 850000, img: "/retro.jpg", categoria: "retrovisores y regletas" },
+    { id: 2, nombre: "Retrovisor 60 cm", precio: 380000, img: "/retro2.jpg", categoria: "retrovisores y regletas" },
     { id: 3, nombre: "Regleta LED azul", precio: 450000, img: "/public/retro3.jpg", categoria: "retrovisores y regletas" },
 
     // DEFENSAS

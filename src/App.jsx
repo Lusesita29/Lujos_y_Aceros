@@ -18,23 +18,23 @@ function App() {
     // RETROVISORS Y REGLETAS
     { id: 1, nombre: "Retrovisores Cromados", precio: 850000, img: "/retro.jpg", categoria: "retrovisores y regletas" },
     { id: 2, nombre: "Retrovisor 60 cm", precio: 380000, img: "/retro2.jpg", categoria: "retrovisores y regletas" },
-    { id: 3, nombre: "Regleta LED azul", precio: 450000, img: "/public/retro3.jpg", categoria: "retrovisores y regletas" },
+    { id: 3, nombre: "Regleta LED azul", precio: 450000, img: "/retro3.jpg", categoria: "retrovisores y regletas" },
 
     // DEFENSAS
-    { id: 4, nombre: "Defensa Delantera LED", precio: 1950000, img: "/public/defensa.jpg", categoria: "defensas" },
-    { id: 5, nombre: "Defensa Trasera con Luces", precio: 1780000, img: "/public/defensa2.jpg", categoria: "defensas" },
+    { id: 4, nombre: "Defensa Delantera LED", precio: 1950000, img: "/defensa.jpg", categoria: "defensas" },
+    { id: 5, nombre: "Defensa Trasera con Luces", precio: 1780000, img: "/defensa2.jpg", categoria: "defensas" },
 
     // GUARDABARROS Y BABEROS
-    { id: 6, nombre: "Guardabarros Inox", precio: 680000, img: "/public/guarda.jpg", categoria: "guardabarros" },
-    { id: 7, nombre: "Babero Inox Personalizado", precio: 720000, img: "/public/babero.jpg", categoria: "baberos" },
+    { id: 6, nombre: "Guardabarros Inox", precio: 680000, img: "/guarda.jpg", categoria: "guardabarros" },
+    { id: 7, nombre: "Babero Inox Personalizado", precio: 720000, img: "/babero.jpg", categoria: "baberos" },
 
     // MOFLES Y ESTRIBOS
-    { id: 8, nombre: "Mofle Escape Cromado 5 pulgadas", precio: 1350000, img: "/public/mofle.jpg", categoria: "mofles" },
-    { id: 9, nombre: "Estribos Laterales Tubulares", precio: 1680000, img: "/public/estribo.jpg", categoria: "estribos" },
+    { id: 8, nombre: "Mofle Escape Cromado 5 pulgadas", precio: 1350000, img: "/mofle.jpg", categoria: "mofles" },
+    { id: 9, nombre: "Estribos Laterales Tubulares", precio: 1680000, img: "/estribo.jpg", categoria: "estribos" },
 
     // TANQUES Y PORTA LICUADORAS
-    { id: 10, nombre: "Tanque de Agua 100 Litros Inox", precio: 980000, img: "/public/tanque.jpg", categoria: "tanques" },
-    { id: 11, nombre: "Porta Licuadora Inox con Cerradura", precio: 890000, img: "/public/portalic.jpg", categoria: "portalicuadora" },
+    { id: 10, nombre: "Tanque de Agua 100 Litros Inox", precio: 980000, img: "/tanque.jpg", categoria: "tanques" },
+    { id: 11, nombre: "Porta Licuadora Inox con Cerradura", precio: 890000, img: "/portalic.jpg", categoria: "portalicuadora" },
   ];
 
   const categorias = [
@@ -102,7 +102,7 @@ function App() {
       {/* HERO */}
       <section className="min-h-screen bg-white flex flex-col items-center justify-center px-6">
         <motion.div className="text-center">
-          <img src="/public/logo.jpg" alt="Aceros y Lujos" className="w-80 md:w-96 mb-8 mx-auto" />
+          <img src="/logo.jpg" alt="Aceros y Lujos" className="w-80 md:w-96 mb-8 mx-auto" />
           <h1 className="text-6xl md:text-8xl font-black text-black mb-4">INOXIDABLES</h1>
           <p className="text-2xl md:text-3xl text-gray-700 mb-10">Accesorios Premium para Camiones –  imparable en cada kilómetro</p>
           <a href="#categorias" className="bg-green-700 text-white font-bold px-12 py-5 rounded-full text-xl hover:bg-green-800 transition transform hover:scale-105 inline-block shadow-2xl">

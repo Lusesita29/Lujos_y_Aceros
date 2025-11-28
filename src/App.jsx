@@ -33,16 +33,12 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem("temaOscuro", JSON.stringify(temaOscuro));
-    if (temaOscuro) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    if (temaOscuro) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
   }, [temaOscuro]);
 
   const toggleTema = () => setTemaOscuro(prev => !prev);
 
-  // === PRODUCTOS ===
   const productos = [
     { id: 1, nombre: "Retrovisores Cromados", precio: 850000, img: "/retro.jpg", categoria: "retrovisores y regletas" },
     { id: 2, nombre: "Retrovisor 60 cm", precio: 380000, img: "/retro2.jpg", categoria: "retrovisores y regletas" },
@@ -58,125 +54,87 @@ function App() {
   ];
 
   const categorias = [
-    { id: "todos", nombre: "Todos los Productos", icon: <FaTools /> },
-    { id: "retrovisores y regletas", nombre: "Retrovisores y Regletas", icon: <FaCarSide /> },
+    { id: "todos", nombre: "Todos", icon: <FaTools /> },
+    { id: "retrovisores y regletas", nombre: "Retrovisores", icon: <FaCarSide /> },
     { id: "defensas", nombre: "Defensas", icon: <FaShieldAlt /> },
     { id: "guardabarros", nombre: "Guardabarros", icon: <FaShieldAlt /> },
     { id: "baberos", nombre: "Baberos", icon: <FaWrench /> },
-    { id: "mofles", nombre: "Mofles y Escapes", icon: <FaTools /> },
+    { id: "mofles", nombre: "Mofles", icon: <FaTools /> },
     { id: "estribos", nombre: "Estribos", icon: <FaTools /> },
-    { id: "tanques", nombre: "Tanques de Agua", icon: <FaWater /> },
-    { id: "portalicuadora", nombre: "Porta Licuadoras", icon: <FaBlender /> },
+    { id: "tanques", nombre: "Tanques", icon: <FaWater /> },
+    { id: "portalicuadora", nombre: "Porta Licuadora", icon: <FaBlender /> },
   ];
 
   const productosFiltrados = categoriaActiva === "todos"
     ? productos
     : productos.filter(p => p.categoria === categoriaActiva);
 
-  // === FUNCIONES DEL CARRITO ===
   const agregarAlCarrito = (producto) => {
     setCarrito(prev => {
-      const existe = prev.find(item => item.id === producto.id);
-      if (existe) {
-        return prev.map(item =>
-          item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
-        );
-      }
-      return [...prev, { ...producto, cantidad: 1 }];
+      const existe = prev.find(i => i.id === producto.id);
+      if (existe) return prev.map(i => i.id === producto.id ? {...i, cantidad: i.cantidad + 1} : i);
+      return [...prev, {...producto, cantidad: 1}];
     });
   };
 
   const cambiarCantidad = (id, delta) => {
-    setCarrito(prev =>
-      prev
-        .map(item =>
-          item.id === id ? { ...item, cantidad: Math.max(1, item.cantidad + delta) } : item
-        )
-        .filter(item => item.cantidad > 0)
+    setCarrito(prev => prev
+      .map(i => i.id === id ? {...i, cantidad: Math.max(1, i.cantidad + delta)} : i)
+      .filter(i => i.cantidad > 0)
     );
   };
 
-  const eliminarDelCarrito = (id) => {
-    setCarrito(prev => prev.filter(item => item.id !== id));
-  };
+  const eliminarDelCarrito = (id) => setCarrito(prev => prev.filter(i => i.id !== id));
 
-  const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
-  const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+  const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
+  const totalItems = carrito.reduce((s, i) => s + i.cantidad, 0);
 
   const enviarAWhatsApp = () => {
     if (carrito.length === 0) return;
-
-    let mensaje = `*¡Hola Aceros y Lujos!* \n\nQuiero cotizar:\n\n`;
-    carrito.forEach(item => {
-      mensaje += `• ${item.nombre}\n  Cantidad: ${item.cantidad} → $${(item.precio * item.cantidad).toLocaleString()} COP\n\n`;
+    let msg = `*¡Hola Aceros y Lujos!* \n\nCotización:\n\n`;
+    carrito.forEach(i => {
+      msg += `• ${i.nombre} ×${i.cantidad} → $${(i.precio*i.cantidad).toLocaleString()} COP\n`;
     });
-    mensaje += `─────────────────\n`;
-    mensaje += `*TOTAL: $${total.toLocaleString()} COP*\n\n`;
-    mensaje += `¡Gracias, quedo pendiente!`;
-
-    const url = `https://wa.me/573001704587?text=${encodeURIComponent(mensaje)}`;
-    window.open(url, "_blank");
+    msg += `\n*TOTAL: $${total.toLocaleString()} COP*\n¡Gracias!`;
+    window.open(`https://wa.me/573001704587?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-500 ${temaOscuro ? "dark bg-gray-900" : "bg-gray-50"}`}>
+    <div className={`min-h-screen transition-all duration-500 ${temaOscuro ? "dark bg-black" : "bg-gray-100"}`}>
 
-      {/* BOTONES FIJOS MÓVIL */}
-      <div className="fixed top-4 left-4 right-4 flex justify-between z-50 md:hidden">
-        <button
-          onClick={() => setMenuAbierto(true)}
-          className="bg-white dark:bg-gray-800 p-3.5 rounded-full shadow-2xl"
-        >
-          <FaBars size={24} className="text-green-700 dark:text-green-400" />
+      {/* LOGO FIJO EN LA ESQUINA SUPERIOR IZQUIERDA */}
+      <div className="fixed top-4 left-4 z-50 pointer-events-none">
+        <img src="/logo.jpg" alt="Aceros y Lujos" className="h-14 drop-shadow-2xl pointer-events-auto" />
+      </div>
+
+      {/* BOTONES MÓVIL: MENÚ + TEMA */}
+      <div className="fixed top-4 right-4 flex gap-3 z-50 md:hidden">
+        <button onClick={toggleTema} className="bg-black/20 backdrop-blur-lg p-3.5 rounded-full shadow-xl">
+          {temaOscuro ? <FaSun className="text-yellow-300" size={22} /> : <FaMoon className="text-white" size={22} />}
         </button>
-        <button
-          onClick={toggleTema}
-          className="bg-white dark:bg-gray-800 p-3.5 rounded-full shadow-2xl"
-        >
-          {temaOscuro ? <FaSun size={24} className="text-yellow-400" /> : <FaMoon size={24} className="text-gray-800" />}
+        <button onClick={() => setMenuAbierto(true)} className="bg-black/20 backdrop-blur-lg p-3.5 rounded-full shadow-xl">
+          <FaBars className="text-white" size={24} />
         </button>
       </div>
 
-      {/* MENÚ LATERAL DESPLEGABLE (MÓVIL) */}
+      {/* MENÚ LATERAL MÓVIL */}
       <AnimatePresence>
         {menuAbierto && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMenuAbierto(false)}
-              className="fixed inset-0 bg-black/60 z-40"
-            />
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25 }}
-              className="fixed left-0 top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl z-50 p-6 overflow-y-auto"
-            >
-              <div className="flex justify-between items-center mb-10">
-                <img src="/logo.jpg" alt="Logo" className="h-14" />
-                <button onClick={() => setMenuAbierto(false)}>
-                  <FaTimes size={30} className="text-gray-600 dark:text-gray-300" />
-                </button>
+            <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+              className="fixed inset-0 bg-black/80 z-40" onClick={() => setMenuAbierto(false)} />
+            <motion.div initial={{x:"-100%"}} animate={{x:0}} exit={{x:"-100%"}}
+              className="fixed left-0 top-0 h-full w-80 bg-gradient-to-b from-black to-zinc-900 text-white z-50 p-6 overflow-y-auto">
+              <div className="flex justify-end mb-8">
+                <button onClick={() => setMenuAbierto(false)}><FaTimes size={30} /></button>
               </div>
-              <h3 className="text-xl font-bold mb-6 text-gray-800 dark:text-white">Categorías</h3>
               {categorias.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => {
-                    setCategoriaActiva(cat.id);
-                    setMenuAbierto(false);
-                  }}
-                  className={`w-full flex items-center gap-4 p-4 rounded-xl mb-3 transition-all ${
-                    categoriaActiva === cat.id
-                      ? "bg-green-600 text-white shadow-lg"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200"
-                  }`}
-                >
+                <button key={cat.id} onClick={() => {setCategoriaActiva(cat.id); setMenuAbierto(false);}}
+                  className={`w-full flex items-center gap-4 p-5 rounded-2xl mb-3 text-lg font-medium transition-all ${
+                    categoriaActiva === cat.id ? "bg-gradient-to-r from-lime-500 to-green-500 shadow-2xl shadow-lime-500/50" : "hover:bg-white/10"
+                  }`}>
                   <span className="text-2xl">{cat.icon}</span>
-                  <span className="font-medium">{cat.nombre}</span>
+                  <span>{cat.nombre}</span>
                 </button>
               ))}
             </motion.div>
@@ -185,83 +143,73 @@ function App() {
       </AnimatePresence>
 
       {/* HEADER ESCRITORIO */}
-      <header className="hidden md:flex sticky top-0 z-30 bg-white dark:bg-gray-900 shadow-lg items-center justify-between px-8 py-5">
-        <img src="/logo.jpg" alt="Aceros y Lujos" className="h-16" />
-        <div className="flex items-center gap-6">
-          {categorias.slice(0, 7).map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => setCategoriaActiva(cat.id)}
-              className={`font-medium px-5 py-2 rounded-full transition ${
-                categoriaActiva === cat.id
-                  ? "bg-green-600 text-white"
-                  : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
-              }`}
-            >
+      <header className="hidden md:flex sticky top-0 z-40 bg-gradient-to-r from-black via-black/95 to-black/90 backdrop-blur-xl shadow-2xl px-8 py-5 items-center justify-center">
+        <nav className="flex gap-8">
+          {categorias.map(cat => (
+            <button key={cat.id} onClick={() => setCategoriaActiva(cat.id)}
+              className={`font-bold text-lg transition-all ${
+                categoriaActiva === cat.id 
+                  ? "text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-green-500 drop-shadow-lg" 
+                  : "text-gray-300 hover:text-white"
+              }`}>
               {cat.nombre}
             </button>
           ))}
-          <button
-          onClick={toggleTema}
-          className="p-3 bg-gray-100 dark:bg-gray-800 rounded-full"
-        >
-          {temaOscuro ? <FaSun className="text-yellow-500" /> : <FaMoon className="text-gray-700" />}
-        </button>
-        </div>
+          <button onClick={toggleTema} className="ml-8">
+            {temaOscuro ? <FaSun className="text-yellow-300" size={26} /> : <FaMoon className="text-gray-400" size={26} />}
+          </button>
+        </nav>
       </header>
 
       {/* HERO */}
-      <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-gradient-to-b from-transparent to-gray-100 dark:to-gray-900">
+      <section className="min-h-screen flex flex-col items-center justify-center px-8 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60 pointer-events-none" />
         <motion.h1
-          initial={{ y: 50, opacity: 0 }}
+          initial={{ y: 60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="text-6xl md:text-8xl font-black text-green-700 dark:text-green-400 mb-4"
+          transition={{ duration: 1 }}
+          className="text-7xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-lime-400 via-green-500 to-cyan-400 drop-shadow-2xl mb-6"
+          style={{ textShadow: '0 0 40px rgba(0,255,100,0.8)' }}
         >
           ACEROS Y LUJOS
         </motion.h1>
-        <p className="text-xl md:text-3xl text-gray-700 dark:text-gray-300 mb-10">
-          Accesorios Inoxidables Premium para Camiones
+        <p className="text-2xl md:text-4xl text-white font-bold mb-12 drop-shadow-2xl">
+          Accesorios Inoxidables Premium
         </p>
         <button
           onClick={() => document.getElementById('productos')?.scrollIntoView({ behavior: 'smooth' })}
-          className="bg-green-600 hover:bg-green-700 text-white font-bold px-12 py-5 rounded-full text-xl shadow-2xl transition"
+          className="relative px-12 py-6 bg-gradient-to-r from-lime-500 to-green-500 text-black font-black font-bold text-2xl rounded-full shadow-2xl shadow-lime-500/50 hover:shadow-lime-400/80 hover:scale-105 transition-all"
         >
-          Ver Catálogo
+          VER CATÁLOGO
         </button>
       </section>
 
       {/* PRODUCTOS */}
-      <section id="productos" className="py-16 px-4">
+      <section id="productos" className="py-20 px-6 bg-black/95">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-black text-center mb-12 text-green-700 dark:text-green-400">
-            {categorias.find(c => c.id === categoriaActiva)?.nombre || "Productos"}
+          <h2 className="text-5xl font-black text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-green-500">
+            {categorias.find(c => c.id === categoriaActiva)?.nombre}
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {productosFiltrados.map((prod, i) => (
               <motion.div
                 key={prod.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
+                transition={{ delay: i * 0.07 }}
                 onClick={() => agregarAlCarrito(prod)}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden cursor-pointer group transform hover:-translate-y-2 transition-all duration-300"
+                className="group cursor-pointer"
               >
-                <div className="overflow-hidden">
-                  <img
-                    src={prod.img}
-                    alt={prod.nombre}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition duration-500"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-sm line-clamp-2 text-gray-900 dark:text-white">
-                    {prod.nombre}
-                  </h3>
-                  <p className="text-green-600 dark:text-green-400 font-black text-xl mt-2">
-                    ${prod.precio.toLocaleString()} COP
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Toca para añadir</p>
+                <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+                  <img src={prod.img} alt={prod.nombre} className="w-full h-64 object-cover group-hover:scale-110 transition duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-white font-bold text-lg drop-shadow-2xl">{prod.nombre}</h3>
+                    <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-green-500">
+                      ${prod.precio.toLocaleString()} COP
+                    </p>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -272,11 +220,11 @@ function App() {
       {/* BOTÓN CARRITO FIJO */}
       <button
         onClick={() => setCarritoAbierto(true)}
-        className="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white p-5 rounded-full shadow-2xl z-40 transition"
+        className="fixed bottom-8 right-8 bg-gradient-to-r from-lime-500 to-green-500 text-black p-6 rounded-full shadow-2xl shadow-lime-500/60 z-40 hover:shadow-lime-400/100 hover:scale-110 transition-all"
       >
-        <FaShoppingCart size={28} />
+        <FaShoppingCart size={32} />
         {totalItems > 0 && (
-          <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center animate-pulse">
+          <span className="absolute -top-3 -right-3 bg-red-600 text-white font-bold rounded-full w-10 h-10 flex items-center justify-center animate-pulse shadow-lg">
             {totalItems}
           </span>
         )}
@@ -285,81 +233,44 @@ function App() {
       {/* MODAL CARRITO */}
       <AnimatePresence>
         {carritoAbierto && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 z-50 flex items-end"
-            onClick={() => setCarritoAbierto(false)}
-          >
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 30 }}
-              className="bg-white dark:bg-gray-900 w-full max-w-lg mx-auto rounded-t-3xl p-6 max-h-[85vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3 className="text-2xl font-black text-green-600 dark:text-green-400 text-center mb-6">
-                Mi Pedido ({totalItems})
+          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+            className="fixed inset-0 bg-black/90 z-50 flex items-end" onClick={() => setCarritoAbierto(false)}>
+            <motion.div initial={{y:"100%"}} animate={{y:0}} exit={{y:"100%"}}
+              className="bg-gradient-to-b from-zinc-900 to-black w-full max-w-lg mx-auto rounded-t-3xl p-8 max-h-[85vh] overflow-y-auto"
+              onClick={e => e.stopPropagation()}>
+              <h3 className="text-3xl font-black text-center text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-green-500 mb-8">
+                MI PEDIDO ({totalItems})
               </h3>
-
               {carrito.length === 0 ? (
-                <p className="text-center text-gray-500 dark:text-gray-400 py-16 text-lg">
-                  Tu carrito está vacío
-                </p>
+                <p className="text-center text-gray-400 text-xl py-20">Carrito vacío</p>
               ) : (
                 <>
                   {carrito.map(item => (
-                    <div key={item.id} className="flex gap-4 mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-                      <img src={item.img} alt={item.nombre} className="w-20 h-20 object-cover rounded-lg" />
+                    <div key={item.id} className="flex gap-4 mb-6 pb-6 border-b border-gray-800">
+                      <img src={item.img} alt={item.nombre} className="w-24 h-24 object-cover rounded-2xl" />
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 dark:text-white">{item.nombre}</h4>
-                        <p className="text-green-600 dark:text-green-400 font-bold text-lg">
+                        <h4 className="text-white font-bold">{item.nombre}</h4>
+                        <p className="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-green-500 font-black text-xl">
                           ${(item.precio * item.cantidad).toLocaleString()} COP
                         </p>
                       </div>
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={() => cambiarCantidad(item.id, -1)}
-                            className="bg-gray-200 dark:bg-gray-700 p-2 rounded-lg"
-                          >
-                            <FaMinus size={14} />
-                          </button>
-                          <span className="font-bold w-8 text-center">{item.cantidad}</span>
-                          <button
-                            onClick={() => cambiarCantidad(item.id, 1)}
-                            className="bg-green-600 text-white p-2 rounded-lg"
-                          >
-                            <FaPlus size={14} />
-                          </button>
+                      <div className="text-right">
+                        <div className="flex items-center gap-3 mb-3">
+                          <button onClick={() => cambiarCantidad(item.id, -1)} className="bg-gray-800 p-2 rounded-lg"><FaMinus /></button>
+                          <span className="text-white font-bold text-xl w-12">{item.cantidad}</span>
+                          <button onClick={() => cambiarCantidad(item.id, 1)} className="bg-gradient-to-r from-lime-500 to-green-500 p-2 rounded-lg"><FaPlus /></button>
                         </div>
-                        <button
-                          onClick={() => eliminarDelCarrito(item.id)}
-                          className="text-red-600 dark:text-red-400"
-                        >
-                          <FaTrash size={18} />
-                        </button>
+                        <button onClick={() => eliminarDelCarrito(item.id)} className="text-red-500"><FaTrash /></button>
                       </div>
                     </div>
                   ))}
-
-                  <div className="mt-6 pt-4 border-t border-gray-300 dark:border-gray-700">
-                    <div className="flex justify-between text-xl font-black mb-6">
-                      <span className="text-gray-800 dark:text-white">Total:</span>
-                      <span className="text-green-600 dark:text-green-400">
-                        ${total.toLocaleString()} COP
-                      </span>
-                    </div>
-                    <button
-                      onClick={enviarAWhatsApp}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-full flex items-center justify-center gap-3 text-lg transition"
-                    >
-                      <FaWhatsapp size={28} />
-                      Enviar Pedido por WhatsApp
-                    </button>
+                  <div className="text-3xl font-black text-white text-right mb-8">
+                    TOTAL: <span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-green-500">${total.toLocaleString()} COP</span>
                   </div>
+                  <button onClick={enviarAWhatsApp}
+                    className="w-full bg-gradient-to-r from-lime-500 to-green-500 text-black font-black text-xl py-5 rounded-3xl shadow-2xl shadow-lime-500/60 hover:shadow-lime-400/100 transition-all">
+                    <FaWhatsapp className="inline mr-3" size={32} /> ENVIAR POR WHATSAPP
+                  </button>
                 </>
               )}
             </motion.div>
@@ -367,7 +278,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      <footer className="py-12 bg-black text-white text-center">
+      <footer className="py-12 bg-black text-center text-gray-400">
         © 2025 Aceros y Lujos • Soledad, Colombia
       </footer>
     </div>

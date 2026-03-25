@@ -79,7 +79,7 @@ function App() {
     mensaje += `─────────────────\n`;
     mensaje += `*TOTAL: $${total.toLocaleString()} COP*\n\n`;
     mensaje += `¡Gracias, quedo pendiente de su respuesta!`;
-    const telefono = "573001704587";
+    const telefono = "573005968323";
     const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, "_blank");
   };

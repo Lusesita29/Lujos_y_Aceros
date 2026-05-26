@@ -1,15 +1,16 @@
-
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaWhatsapp, FaShoppingCart, FaPlus, FaMinus, FaTrash, FaChevronDown, FaBars } from 'react-icons/fa';
+import { FaWhatsapp, FaShoppingCart, FaPlus, FaMinus, FaTrash, FaChevronDown, FaBars, FaTimes, FaUser } from 'react-icons/fa';
 
 function App() {
   const [carrito, setCarrito] = useState([]);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
   const [categoriaActiva, setCategoriaActiva] = useState("todos");
-  const [dropdownAbierto, setDropdownAbierto] = useState(false);
+  const [categoriaDropdown, setCategoriaDropdown] = useState(false);
+  const [menuMovilAbierto, setMenuMovilAbierto] = useState(false);
+  const [menuCatMovilAbierto, setMenuCatMovilAbierto] = useState(false);
+  const dropdownRef = useRef(null);
 
-  // === PRODUCTOS ===
   const productos = [
     { id: 1, nombre: "Retrovisores Cromados", precio: 850000, img: "/retro.jpg", categoria: "retrovisores y regletas" },
     { id: 2, nombre: "Retrovisor 60 cm", precio: 380000, img: "/retro2.jpg", categoria: "retrovisores y regletas" },
@@ -40,32 +41,33 @@ function App() {
     ? productos
     : productos.filter(p => p.categoria === categoriaActiva);
 
-  // === FUNCIONES CARRITO ===
+  // Cerrar dropdown al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setCategoriaDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const agregarAlCarrito = (producto) => {
     setCarrito((prev) => {
       const existe = prev.find((item) => item.id === producto.id);
-      if (existe) {
-        return prev.map((item) =>
-          item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
-        );
-      }
+      if (existe) return prev.map((item) => item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item);
       return [...prev, { ...producto, cantidad: 1 }];
     });
   };
 
   const cambiarCantidad = (id, delta) => {
     setCarrito((prev) =>
-      prev
-        .map((item) =>
-          item.id === id ? { ...item, cantidad: Math.max(1, item.cantidad + delta) } : item
-        )
+      prev.map((item) => item.id === id ? { ...item, cantidad: Math.max(1, item.cantidad + delta) } : item)
         .filter((item) => item.cantidad > 0)
     );
   };
 
-  const eliminarDelCarrito = (id) => {
-    setCarrito((prev) => prev.filter((item) => item.id !== id));
-  };
+  const eliminarDelCarrito = (id) => setCarrito((prev) => prev.filter((item) => item.id !== id));
 
   const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
   const totalProductos = carrito.reduce((sum, item) => sum + item.cantidad, 0);
@@ -76,98 +78,221 @@ function App() {
     carrito.forEach((item) => {
       mensaje += `• ${item.nombre}\n Cantidad: ${item.cantidad} → $${(item.precio * item.cantidad).toLocaleString()} COP\n\n`;
     });
-    mensaje += `─────────────────\n`;
-    mensaje += `*TOTAL: $${total.toLocaleString()} COP*\n\n`;
-    mensaje += `¡Gracias, quedo pendiente de su respuesta!`;
-    const telefono = "573005968323";
-    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
-    window.open(url, "_blank");
+    mensaje += `─────────────────\n*TOTAL: $${total.toLocaleString()} COP*\n\n¡Gracias, quedo pendiente de su respuesta!`;
+    window.open(`https://wa.me/573005968323?text=${encodeURIComponent(mensaje)}`, "_blank");
+  };
+
+  const seleccionarCategoria = (catId) => {
+    setCategoriaActiva(catId);
+    setCategoriaDropdown(false);
+    setMenuMovilAbierto(false);
+    setMenuCatMovilAbierto(false);
+    document.getElementById('productos')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <>
-      {/* HERO */}
-      <section className="min-h-screen bg-white flex flex-col items-center justify-center px-6">
-        <motion.div className="text-center">
+      {/* ===== NAVBAR SUPERIOR ===== */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black border-b border-[rgba(8,255,8,0.25)] shadow-[0_2px_20px_rgba(8,255,8,0.15)]">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+
+          {/* Logo */}
+          <a href="#inicio" className="flex items-center gap-2 flex-shrink-0">
+            <img src="/logo.jpg" alt="Aceros y Lujos" className="h-10 w-auto rounded" />
+          </a>
+
+          {/* NAV LINKS — Desktop */}
+          <div className="hidden md:flex items-center gap-1 flex-1 justify-center">
+
+            {/* Inicio */}
+            <a
+              href="#inicio"
+              className="px-4 py-2 text-sm font-bold text-white hover:text-[rgb(8,255,8)] transition-colors tracking-wide uppercase"
+            >
+              Inicio
+            </a>
+
+            {/* Categorías con Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setCategoriaDropdown(!categoriaDropdown)}
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-bold text-white hover:text-[rgb(8,255,8)] transition-colors tracking-wide uppercase"
+              >
+                Categorías
+                <FaChevronDown className={`text-xs text-[rgb(8,255,8)] transition-transform duration-200 ${categoriaDropdown ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {categoriaDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute top-full left-0 mt-1 w-56 bg-gray-950 border border-[rgba(8,255,8,0.3)] rounded-xl shadow-2xl shadow-[0_8px_30px_rgba(8,255,8,0.15)] overflow-hidden"
+                  >
+                    {categorias.map((cat) => (
+                      <button
+                        key={cat.id}
+                        onClick={() => seleccionarCategoria(cat.id)}
+                        className={`w-full text-left px-5 py-3 text-sm font-medium transition-all
+                          ${categoriaActiva === cat.id
+                            ? 'bg-[rgba(8,255,8,0.15)] text-[rgb(8,255,8)] font-bold border-l-2 border-[rgb(8,255,8)]'
+                            : 'text-gray-300 hover:bg-[rgba(8,255,8,0.08)] hover:text-white'
+                          }`}
+                      >
+                        {cat.nombre}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Sobre Nosotros */}
+            <a
+              href="#nosotros"
+              className="px-4 py-2 text-sm font-bold text-white hover:text-[rgb(8,255,8)] transition-colors tracking-wide uppercase"
+            >
+              Nosotros
+            </a>
+
+            {/* Contáctanos */}
+            <a
+              href="#contacto"
+              className="px-4 py-2 text-sm font-bold text-white hover:text-[rgb(8,255,8)] transition-colors tracking-wide uppercase"
+            >
+              Contáctanos
+            </a>
+          </div>
+
+          {/* ICONOS DERECHA — Desktop */}
+          <div className="hidden md:flex items-center gap-2">
+            {/* Icono usuario */}
+            <button className="p-2.5 text-gray-400 hover:text-[rgb(8,255,8)] transition-colors rounded-lg hover:bg-[rgba(8,255,8,0.08)]">
+              <FaUser size={18} />
+            </button>
+
+            {/* Carrito */}
+            <button
+              onClick={() => setCarritoAbierto(true)}
+              className="relative p-2.5 text-gray-400 hover:text-[rgb(8,255,8)] transition-colors rounded-lg hover:bg-[rgba(8,255,8,0.08)]"
+            >
+              <FaShoppingCart size={20} />
+              {totalProductos > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[rgb(8,255,8)] text-black rounded-full w-5 h-5 flex items-center justify-center font-black text-xs shadow-[0_0_10px_rgba(8,255,8,0.8)]">
+                  {totalProductos}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* MÓVIL: carrito + hamburguesa */}
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={() => setCarritoAbierto(true)}
+              className="relative p-2.5 text-gray-400 hover:text-[rgb(8,255,8)] transition-colors"
+            >
+              <FaShoppingCart size={22} />
+              {totalProductos > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[rgb(8,255,8)] text-black rounded-full w-5 h-5 flex items-center justify-center font-black text-xs">
+                  {totalProductos}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setMenuMovilAbierto(!menuMovilAbierto)}
+              className="p-2.5 text-gray-300 hover:text-[rgb(8,255,8)] transition-colors"
+            >
+              {menuMovilAbierto ? <FaTimes size={22} /> : <FaBars size={22} />}
+            </button>
+          </div>
+        </div>
+
+        {/* MENÚ MÓVIL */}
+        <AnimatePresence>
+          {menuMovilAbierto && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="md:hidden bg-gray-950 border-t border-[rgba(8,255,8,0.15)] overflow-hidden"
+            >
+              <div className="px-4 py-3 flex flex-col gap-1">
+                <a href="#inicio" onClick={() => setMenuMovilAbierto(false)}
+                  className="px-4 py-3 text-sm font-bold text-white tracking-wide uppercase border-b border-gray-800">
+                  Inicio
+                </a>
+
+                {/* Categorías móvil */}
+                <div>
+                  <button
+                    onClick={() => setMenuCatMovilAbierto(!menuCatMovilAbierto)}
+                    className="w-full flex items-center justify-between px-4 py-3 text-sm font-bold text-white tracking-wide uppercase border-b border-gray-800"
+                  >
+                    <span>Categorías</span>
+                    <FaChevronDown className={`text-[rgb(8,255,8)] text-xs transition-transform ${menuCatMovilAbierto ? 'rotate-180' : ''}`} />
+                  </button>
+                  <AnimatePresence>
+                    {menuCatMovilAbierto && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: 'auto' }}
+                        exit={{ height: 0 }}
+                        className="overflow-hidden bg-black"
+                      >
+                        {categorias.map((cat) => (
+                          <button
+                            key={cat.id}
+                            onClick={() => seleccionarCategoria(cat.id)}
+                            className={`w-full text-left px-8 py-2.5 text-sm transition
+                              ${categoriaActiva === cat.id ? 'text-[rgb(8,255,8)] font-bold' : 'text-gray-400 hover:text-white'}`}
+                          >
+                            {cat.nombre}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <a href="#nosotros" onClick={() => setMenuMovilAbierto(false)}
+                  className="px-4 py-3 text-sm font-bold text-white tracking-wide uppercase border-b border-gray-800">
+                  Nosotros
+                </a>
+                <a href="#contacto" onClick={() => setMenuMovilAbierto(false)}
+                  className="px-4 py-3 text-sm font-bold text-white tracking-wide uppercase">
+                  Contáctanos
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+
+      {/* Espaciador para el navbar fijo */}
+      <div className="h-16" />
+
+      {/* ===== HERO ===== */}
+      <section id="inicio" className="min-h-screen bg-white flex flex-col items-center justify-center px-6">
+        <motion.div className="text-center" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           <img src="/logo.jpg" alt="Aceros y Lujos" className="w-56 md:w-72 mb-6 mx-auto" />
           <h1 className="text-4xl md:text-7xl font-black text-black mb-4">INOXIDABLES</h1>
           <p className="text-lg md:text-2xl text-gray-700 mb-6">Accesorios Premium para Camiones</p>
           <a
-            href="#categorias"
+            href="#productos"
             className="bg-[rgb(8,255,8)] text-black font-bold px-10 py-5 rounded-full text-lg shadow-2xl 
                        hover:bg-[rgb(0,220,0)] transition transform hover:scale-105 
-                       shadow-[0_0_30px_rgba(8,255,8,0.7)] glow-button"
+                       shadow-[0_0_30px_rgba(8,255,8,0.7)] glow-button inline-block"
           >
             Ver Catálogo
           </a>
         </motion.div>
       </section>
 
-      {/* MENÚ DE CATEGORÍAS */}
-      <section id="categorias" className="py-3 bg-gray-900 sticky top-0 z-30 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-4">
-          {/* Desktop */}
-          <div className="hidden md:flex gap-2 flex-wrap justify-center">
-            {categorias.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setCategoriaActiva(cat.id)}
-                className={`px-5 py-2.5 rounded-full font-bold text-sm transition-all
-                  ${categoriaActiva === cat.id
-                    ? "bg-[rgb(8,255,8)] text-black shadow-lg shadow-[0_0_30px_rgba(8,255,8,0.7)] glow-button"
-                    : "bg-gray-800 text-gray-300 hover:bg-[rgb(8,255,8)] hover:text-black hover:shadow-[0_0_25px_rgba(8,255,8,0.6)]"
-                  }`}
-              >
-                {cat.nombre}
-              </button>
-            ))}
-          </div>
-
-          {/* Móvil */}
-          <div className="md:hidden flex items-center justify-between">
-            <button
-              onClick={() => setDropdownAbierto(!dropdownAbierto)}
-              className="flex items-center gap-3 bg-gray-800 px-5 py-4 rounded-xl w-full font-bold text-white shadow-lg"
-            >
-              <FaBars className="text-[rgb(8,255,8)]" />
-              <span className="flex-1 text-left">
-                {categorias.find(c => c.id === categoriaActiva)?.nombre || "Categorías"}
-              </span>
-              <FaChevronDown className={`text-[rgb(8,255,8)] transition ${dropdownAbierto ? "rotate-180" : ""}`} />
-            </button>
-          </div>
-
-          <AnimatePresence>
-            {dropdownAbierto && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="md:hidden bg-gray-800 rounded-b-xl overflow-hidden shadow-2xl mt-1"
-              >
-                {categorias.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => {
-                      setCategoriaActiva(cat.id);
-                      setDropdownAbierto(false);
-                    }}
-                    className={`w-full text-left px-6 py-3.5 text-white font-medium transition
-                      ${categoriaActiva === cat.id ? "bg-[rgb(8,255,8)] text-black font-bold" : "hover:bg-gray-700"}
-                    `}
-                  >
-                    {cat.nombre}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
-
-      {/* PRODUCTOS */}
-      <section className="py-10 bg-gray-50">
+      {/* ===== PRODUCTOS ===== */}
+      <section id="productos" className="py-10 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl md:text-5xl text-center mb-10 font-black text-gray-900">
             {categoriaActiva === "todos" ? "Todos los Productos" : categorias.find(c => c.id === categoriaActiva)?.nombre}
@@ -184,9 +309,7 @@ function App() {
                 <img src={prod.img} alt={prod.nombre} className="w-full h-32 sm:h-40 object-cover" />
                 <div className="p-3 sm:p-4">
                   <h3 className="text-sm sm:text-base font-bold text-black line-clamp-2">{prod.nombre}</h3>
-                  <p className="text-black text-lg sm:text-xl font-black mt-2">
-                    ${prod.precio.toLocaleString()} COP
-                  </p>
+                  <p className="text-black text-lg sm:text-xl font-black mt-2">${prod.precio.toLocaleString()} COP</p>
                   <button
                     onClick={() => agregarAlCarrito(prod)}
                     className="w-full bg-[rgb(8,255,8)] text-black font-bold py-2.5 mt-3 rounded-lg text-sm 
@@ -201,21 +324,41 @@ function App() {
         </div>
       </section>
 
-      {/* BOTÓN CARRITO */}
-      <button
-        onClick={() => setCarritoAbierto(true)}
-        className="fixed bottom-20 right-5 bg-[rgb(8,255,8)] text-black p-5 rounded-full shadow-2xl z-40 
-                   hover:bg-[rgb(0,200,0)] transition transform hover:scale-110 glow-button"
-      >
-        <FaShoppingCart size={28} />
-        {totalProductos > 0 && (
-          <span className="absolute -top-3 -right-3 bg-black text-[rgb(8,255,8)] rounded-full w-9 h-9 flex items-center justify-center font-bold text-sm shadow-lg border-2 border-[rgb(8,255,8)]">
-            {totalProductos}
-          </span>
-        )}
-      </button>
+      {/* ===== SOBRE NOSOTROS ===== */}
+      <section id="nosotros" className="py-16 bg-black text-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-5xl font-black mb-6">
+            Sobre <span className="text-[rgb(8,255,8)]">Nosotros</span>
+          </h2>
+          <p className="text-gray-300 text-lg leading-relaxed mb-4">
+            Somos <strong className="text-white">Aceros y Lujos</strong>, especializados en accesorios inoxidables premium para camiones. Con años de experiencia en el mercado colombiano, fabricamos y distribuimos productos de la más alta calidad.
+          </p>
+          <p className="text-gray-400 leading-relaxed">
+            Ubicados en Soledad, Atlántico. Cada pieza está diseñada para durar y darle a tu vehículo el estilo que merece.
+          </p>
+        </div>
+      </section>
 
-      {/* MODAL CARRITO */}
+      {/* ===== CONTÁCTANOS ===== */}
+      <section id="contacto" className="py-16 bg-gray-900 text-white">
+        <div className="max-w-2xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-5xl font-black mb-6">
+            <span className="text-[rgb(8,255,8)]">Contáctanos</span>
+          </h2>
+          <p className="text-gray-300 mb-8 text-lg">¿Tienes alguna pregunta? Escríbenos por WhatsApp y con gusto te atendemos.</p>
+          <a
+            href="https://wa.me/573005968323"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-[rgb(8,255,8)] text-black font-bold px-10 py-5 rounded-full text-lg glow-button hover:bg-[rgb(0,200,0)] transition"
+          >
+            <FaWhatsapp size={26} /> Escribir al WhatsApp
+          </a>
+          <p className="text-gray-500 mt-6 text-sm">📍 Soledad, Atlántico, Colombia</p>
+        </div>
+      </section>
+
+      {/* ===== MODAL CARRITO ===== */}
       <AnimatePresence>
         {carritoAbierto && (
           <motion.div
@@ -245,9 +388,7 @@ function App() {
                       <img src={item.img} alt={item.nombre} className="w-20 h-20 object-cover rounded" />
                       <div className="flex-grow">
                         <h4 className="font-semibold text-sm">{item.nombre}</h4>
-                        <p className="text-black font-bold text-lg">
-                          ${(item.precio * item.cantidad).toLocaleString()} COP
-                        </p>
+                        <p className="text-black font-bold text-lg">${(item.precio * item.cantidad).toLocaleString()} COP</p>
                       </div>
                       <div className="flex flex-col items-center gap-2">
                         <div className="flex items-center gap-2">
@@ -276,7 +417,6 @@ function App() {
         )}
       </AnimatePresence>
 
-      
       <style jsx>{`
         .glow-button {
           box-shadow: 0 0 30px rgba(8, 255, 8, 0.8);
@@ -291,7 +431,7 @@ function App() {
         }
       `}</style>
 
-      <footer className="py-8 bg-black text-white text-center text-sm">
+      <footer className="py-8 bg-black text-white text-center text-sm border-t border-[rgba(8,255,8,0.15)]">
         © 2025 Aceros y Lujos • Soledad, Colombia
       </footer>
     </>

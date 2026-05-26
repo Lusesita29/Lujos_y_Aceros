@@ -189,9 +189,6 @@ function App() {
 
           {/* Iconos derecha — desktop */}
           <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <button className="nav-icon-btn">
-              <FaUser size={17} />
-            </button>
             <button className="nav-icon-btn" onClick={() => setCarritoAbierto(true)} style={{ position: 'relative' }}>
               <FaShoppingCart size={20} />
               {totalProductos > 0 && (
@@ -319,7 +316,7 @@ function App() {
       }}>
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           <img src="/logo.jpg" alt="Aceros y Lujos"
-            style={{ width: 'min(280px, 70vw)', marginBottom: 24, borderRadius: 12, objectFit: 'cover' }} />
+            style={{ width: 'min(280px, 60vw)', marginBottom: 24, borderRadius: 12, objectFit: 'cover', display: 'block', margin: '0 auto 24px' }} />
           <h1 style={{ fontSize: 'clamp(2.2rem, 8vw, 5rem)', fontWeight: 900, color: '#000', marginBottom: 12, lineHeight: 1.1 }}>
             INOXIDABLES
           </h1>

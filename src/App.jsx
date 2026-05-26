@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaWhatsapp, FaShoppingCart, FaPlus, FaMinus, FaTrash, FaChevronDown, FaBars, FaTimes, FaUser } from 'react-icons/fa';
+import {
+  FaWhatsapp, FaShoppingCart, FaPlus, FaMinus,
+  FaTrash, FaChevronDown, FaBars, FaTimes, FaUser
+} from 'react-icons/fa';
 
 function App() {
   const [carrito, setCarrito] = useState([]);
@@ -12,74 +15,76 @@ function App() {
   const dropdownRef = useRef(null);
 
   const productos = [
-    { id: 1, nombre: "Retrovisores Cromados", precio: 850000, img: "/retro.jpg", categoria: "retrovisores y regletas" },
-    { id: 2, nombre: "Retrovisor 60 cm", precio: 380000, img: "/retro2.jpg", categoria: "retrovisores y regletas" },
-    { id: 3, nombre: "Regleta LED azul", precio: 450000, img: "/retro3.jpg", categoria: "retrovisores y regletas" },
-    { id: 4, nombre: "Defensa Delantera LED", precio: 1950000, img: "/defensa.jpg", categoria: "defensas" },
-    { id: 5, nombre: "Defensa Trasera con Luces", precio: 1780000, img: "/defensa2.jpg", categoria: "defensas" },
-    { id: 6, nombre: "Guardabarros Inox", precio: 680000, img: "/guarda.jpg", categoria: "guardabarros" },
-    { id: 7, nombre: "Babero Inox Personalizado", precio: 720000, img: "/babero.jpg", categoria: "baberos" },
-    { id: 8, nombre: "Mofle Escape Cromado 5 pulgadas", precio: 1350000, img: "/mofle.jpg", categoria: "mofles" },
-    { id: 9, nombre: "Estribos Laterales Tubulares", precio: 1680000, img: "/estribo.jpg", categoria: "estribos" },
-    { id: 10, nombre: "Tanque de Agua 100 Litros Inox", precio: 980000, img: "/tanque.jpg", categoria: "tanques" },
-    { id: 11, nombre: "Porta Licuadora Inox con Cerradura", precio: 890000, img: "/portalic.jpg", categoria: "portalicuadora" },
+    { id: 1,  nombre: "Retrovisores Cromados",           precio: 850000,  img: "/retro.jpg",     categoria: "retrovisores y regletas" },
+    { id: 2,  nombre: "Retrovisor 60 cm",                precio: 380000,  img: "/retro2.jpg",    categoria: "retrovisores y regletas" },
+    { id: 3,  nombre: "Regleta LED azul",                precio: 450000,  img: "/retro3.jpg",    categoria: "retrovisores y regletas" },
+    { id: 4,  nombre: "Defensa Delantera LED",           precio: 1950000, img: "/defensa.jpg",   categoria: "defensas" },
+    { id: 5,  nombre: "Defensa Trasera con Luces",       precio: 1780000, img: "/defensa2.jpg",  categoria: "defensas" },
+    { id: 6,  nombre: "Guardabarros Inox",               precio: 680000,  img: "/guarda.jpg",    categoria: "guardabarros" },
+    { id: 7,  nombre: "Babero Inox Personalizado",       precio: 720000,  img: "/babero.jpg",    categoria: "baberos" },
+    { id: 8,  nombre: "Mofle Escape Cromado 5 pulgadas", precio: 1350000, img: "/mofle.jpg",     categoria: "mofles" },
+    { id: 9,  nombre: "Estribos Laterales Tubulares",    precio: 1680000, img: "/estribo.jpg",   categoria: "estribos" },
+    { id: 10, nombre: "Tanque de Agua 100 Litros Inox",  precio: 980000,  img: "/tanque.jpg",    categoria: "tanques" },
+    { id: 11, nombre: "Porta Licuadora Inox c/ Cerradura",precio: 890000, img: "/portalic.jpg",  categoria: "portalicuadora" },
   ];
 
   const categorias = [
-    { id: "todos", nombre: "Todos los Productos" },
-    { id: "retrovisores y regletas", nombre: "Retrovisores y Regletas" },
-    { id: "defensas", nombre: "Defensas" },
-    { id: "guardabarros", nombre: "Guardabarros" },
-    { id: "baberos", nombre: "Baberos" },
-    { id: "mofles", nombre: "Mofles" },
-    { id: "estribos", nombre: "Estribos" },
-    { id: "tanques", nombre: "Tanques de Agua" },
-    { id: "portalicuadora", nombre: "Porta Licuadoras" },
+    { id: "todos",                  nombre: "Todos los Productos" },
+    { id: "retrovisores y regletas",nombre: "Retrovisores y Regletas" },
+    { id: "defensas",               nombre: "Defensas" },
+    { id: "guardabarros",           nombre: "Guardabarros" },
+    { id: "baberos",                nombre: "Baberos" },
+    { id: "mofles",                 nombre: "Mofles" },
+    { id: "estribos",               nombre: "Estribos" },
+    { id: "tanques",                nombre: "Tanques de Agua" },
+    { id: "portalicuadora",         nombre: "Porta Licuadoras" },
   ];
 
   const productosFiltrados = categoriaActiva === "todos"
     ? productos
     : productos.filter(p => p.categoria === categoriaActiva);
 
-  // Cerrar dropdown al hacer clic fuera
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+    const handler = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
         setCategoriaDropdown(false);
-      }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  // Bloquear scroll del body cuando el menú móvil o carrito está abierto
+  useEffect(() => {
+    document.body.style.overflow = (menuMovilAbierto || carritoAbierto) ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuMovilAbierto, carritoAbierto]);
+
   const agregarAlCarrito = (producto) => {
-    setCarrito((prev) => {
-      const existe = prev.find((item) => item.id === producto.id);
-      if (existe) return prev.map((item) => item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item);
+    setCarrito(prev => {
+      const existe = prev.find(i => i.id === producto.id);
+      if (existe) return prev.map(i => i.id === producto.id ? { ...i, cantidad: i.cantidad + 1 } : i);
       return [...prev, { ...producto, cantidad: 1 }];
     });
   };
 
-  const cambiarCantidad = (id, delta) => {
-    setCarrito((prev) =>
-      prev.map((item) => item.id === id ? { ...item, cantidad: Math.max(1, item.cantidad + delta) } : item)
-        .filter((item) => item.cantidad > 0)
+  const cambiarCantidad = (id, delta) =>
+    setCarrito(prev =>
+      prev.map(i => i.id === id ? { ...i, cantidad: Math.max(1, i.cantidad + delta) } : i)
     );
-  };
 
-  const eliminarDelCarrito = (id) => setCarrito((prev) => prev.filter((item) => item.id !== id));
+  const eliminarDelCarrito = (id) => setCarrito(prev => prev.filter(i => i.id !== id));
 
-  const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
-  const totalProductos = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+  const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
+  const totalProductos = carrito.reduce((s, i) => s + i.cantidad, 0);
 
   const enviarAWhatsApp = () => {
-    if (carrito.length === 0) return;
-    let mensaje = `*¡Hola Aceros y Lujos!* \n\nQuiero cotizar lo siguiente:\n\n`;
-    carrito.forEach((item) => {
-      mensaje += `• ${item.nombre}\n Cantidad: ${item.cantidad} → $${(item.precio * item.cantidad).toLocaleString()} COP\n\n`;
+    if (!carrito.length) return;
+    let msg = `*¡Hola Aceros y Lujos!*\n\nQuiero cotizar:\n\n`;
+    carrito.forEach(i => {
+      msg += `• ${i.nombre}\n  Cantidad: ${i.cantidad} → $${(i.precio * i.cantidad).toLocaleString()} COP\n\n`;
     });
-    mensaje += `─────────────────\n*TOTAL: $${total.toLocaleString()} COP*\n\n¡Gracias, quedo pendiente de su respuesta!`;
-    window.open(`https://wa.me/573005968323?text=${encodeURIComponent(mensaje)}`, "_blank");
+    msg += `─────────────────\n*TOTAL: $${total.toLocaleString()} COP*\n\n¡Gracias!`;
+    window.open(`https://wa.me/573005968323?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   const seleccionarCategoria = (catId) => {
@@ -87,59 +92,88 @@ function App() {
     setCategoriaDropdown(false);
     setMenuMovilAbierto(false);
     setMenuCatMovilAbierto(false);
-    document.getElementById('productos')?.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => document.getElementById('productos')?.scrollIntoView({ behavior: 'smooth' }), 100);
   };
 
   return (
     <>
-      {/* ===== NAVBAR SUPERIOR ===== */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black border-b border-[rgba(8,255,8,0.25)] shadow-[0_2px_20px_rgba(8,255,8,0.15)]">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      {/* ════════════════════════════════════════
+          NAVBAR
+      ════════════════════════════════════════ */}
+      <nav style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
+        background: '#000',
+        borderBottom: '1px solid rgba(8,255,8,0.25)',
+        boxShadow: '0 2px 20px rgba(8,255,8,0.12)',
+      }}>
+        <div style={{
+          maxWidth: 1280, margin: '0 auto',
+          padding: '0 16px',
+          height: 64,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
+        }}>
 
           {/* Logo */}
-          <a href="#inicio" className="flex items-center gap-2 flex-shrink-0">
-            <img src="/logo.jpg" alt="Aceros y Lujos" className="h-10 w-auto rounded" />
+          <a href="#inicio" style={{ display: 'flex', alignItems: 'center', flexShrink: 0, textDecoration: 'none' }}>
+            <img src="/logo.jpg" alt="Aceros y Lujos"
+              style={{ height: 44, width: 'auto', borderRadius: 6, objectFit: 'cover' }} />
           </a>
 
-          {/* NAV LINKS — Desktop */}
-          <div className="hidden md:flex items-center gap-1 flex-1 justify-center">
+          {/* Links — desktop (≥768px) */}
+          <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, justifyContent: 'center' }}>
 
-            {/* Inicio */}
-            <a
-              href="#inicio"
-              className="px-4 py-2 text-sm font-bold text-white hover:text-[rgb(8,255,8)] transition-colors tracking-wide uppercase"
-            >
-              Inicio
-            </a>
+            <a href="#inicio" className="nav-link">Inicio</a>
 
-            {/* Categorías con Dropdown */}
-            <div className="relative" ref={dropdownRef}>
+            {/* Dropdown Categorías */}
+            <div ref={dropdownRef} style={{ position: 'relative' }}>
               <button
-                onClick={() => setCategoriaDropdown(!categoriaDropdown)}
-                className="flex items-center gap-1.5 px-4 py-2 text-sm font-bold text-white hover:text-[rgb(8,255,8)] transition-colors tracking-wide uppercase"
+                onClick={() => setCategoriaDropdown(v => !v)}
+                className="nav-link"
+                style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 Categorías
-                <FaChevronDown className={`text-xs text-[rgb(8,255,8)] transition-transform duration-200 ${categoriaDropdown ? 'rotate-180' : ''}`} />
+                <FaChevronDown style={{
+                  fontSize: 11, color: 'rgb(8,255,8)',
+                  transition: 'transform .2s',
+                  transform: categoriaDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
+                }} />
               </button>
 
               <AnimatePresence>
                 {categoriaDropdown && (
                   <motion.div
-                    initial={{ opacity: 0, y: -8 }}
+                    initial={{ opacity: 0, y: -6 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.18 }}
-                    className="absolute top-full left-0 mt-1 w-56 bg-gray-950 border border-[rgba(8,255,8,0.3)] rounded-xl shadow-2xl shadow-[0_8px_30px_rgba(8,255,8,0.15)] overflow-hidden"
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.16 }}
+                    style={{
+                      position: 'absolute', top: '100%', left: 0, marginTop: 6,
+                      width: 230,
+                      background: '#0a0a0a',
+                      border: '1px solid rgba(8,255,8,0.3)',
+                      borderRadius: 12,
+                      boxShadow: '0 8px 30px rgba(8,255,8,0.15)',
+                      overflow: 'hidden',
+                    }}
                   >
-                    {categorias.map((cat) => (
+                    {categorias.map(cat => (
                       <button
                         key={cat.id}
                         onClick={() => seleccionarCategoria(cat.id)}
-                        className={`w-full text-left px-5 py-3 text-sm font-medium transition-all
-                          ${categoriaActiva === cat.id
-                            ? 'bg-[rgba(8,255,8,0.15)] text-[rgb(8,255,8)] font-bold border-l-2 border-[rgb(8,255,8)]'
-                            : 'text-gray-300 hover:bg-[rgba(8,255,8,0.08)] hover:text-white'
-                          }`}
+                        style={{
+                          width: '100%', textAlign: 'left',
+                          padding: '11px 20px',
+                          fontSize: 13, fontWeight: categoriaActiva === cat.id ? 700 : 500,
+                          color: categoriaActiva === cat.id ? 'rgb(8,255,8)' : '#ccc',
+                          background: categoriaActiva === cat.id ? 'rgba(8,255,8,0.1)' : 'transparent',
+                          borderLeft: categoriaActiva === cat.id ? '3px solid rgb(8,255,8)' : '3px solid transparent',
+                          border: 'none',
+                          borderLeft: categoriaActiva === cat.id ? '3px solid rgb(8,255,8)' : '3px solid transparent',
+                          cursor: 'pointer',
+                          transition: 'all .15s',
+                        }}
+                        onMouseEnter={e => { if (categoriaActiva !== cat.id) e.currentTarget.style.background = 'rgba(8,255,8,0.06)'; }}
+                        onMouseLeave={e => { if (categoriaActiva !== cat.id) e.currentTarget.style.background = 'transparent'; }}
                       >
                         {cat.nombre}
                       </button>
@@ -149,105 +183,110 @@ function App() {
               </AnimatePresence>
             </div>
 
-            {/* Sobre Nosotros */}
-            <a
-              href="#nosotros"
-              className="px-4 py-2 text-sm font-bold text-white hover:text-[rgb(8,255,8)] transition-colors tracking-wide uppercase"
-            >
-              Nosotros
-            </a>
-
-            {/* Contáctanos */}
-            <a
-              href="#contacto"
-              className="px-4 py-2 text-sm font-bold text-white hover:text-[rgb(8,255,8)] transition-colors tracking-wide uppercase"
-            >
-              Contáctanos
-            </a>
+            <a href="#nosotros"  className="nav-link">Nosotros</a>
+            <a href="#contacto" className="nav-link">Contáctanos</a>
           </div>
 
-          {/* ICONOS DERECHA — Desktop */}
-          <div className="hidden md:flex items-center gap-2">
-            {/* Icono usuario */}
-            <button className="p-2.5 text-gray-400 hover:text-[rgb(8,255,8)] transition-colors rounded-lg hover:bg-[rgba(8,255,8,0.08)]">
-              <FaUser size={18} />
+          {/* Iconos derecha — desktop */}
+          <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <button className="nav-icon-btn">
+              <FaUser size={17} />
             </button>
-
-            {/* Carrito */}
-            <button
-              onClick={() => setCarritoAbierto(true)}
-              className="relative p-2.5 text-gray-400 hover:text-[rgb(8,255,8)] transition-colors rounded-lg hover:bg-[rgba(8,255,8,0.08)]"
-            >
+            <button className="nav-icon-btn" onClick={() => setCarritoAbierto(true)} style={{ position: 'relative' }}>
               <FaShoppingCart size={20} />
               {totalProductos > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[rgb(8,255,8)] text-black rounded-full w-5 h-5 flex items-center justify-center font-black text-xs shadow-[0_0_10px_rgba(8,255,8,0.8)]">
+                <span style={{
+                  position: 'absolute', top: -4, right: -4,
+                  background: 'rgb(8,255,8)', color: '#000',
+                  borderRadius: '50%', width: 20, height: 20,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, fontWeight: 900,
+                  boxShadow: '0 0 10px rgba(8,255,8,0.8)',
+                }}>
                   {totalProductos}
                 </span>
               )}
             </button>
           </div>
 
-          {/* MÓVIL: carrito + hamburguesa */}
-          <div className="flex md:hidden items-center gap-2">
-            <button
-              onClick={() => setCarritoAbierto(true)}
-              className="relative p-2.5 text-gray-400 hover:text-[rgb(8,255,8)] transition-colors"
-            >
+          {/* Móvil: carrito + hamburguesa */}
+          <div className="nav-mobile" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <button className="nav-icon-btn" onClick={() => setCarritoAbierto(true)} style={{ position: 'relative' }}>
               <FaShoppingCart size={22} />
               {totalProductos > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[rgb(8,255,8)] text-black rounded-full w-5 h-5 flex items-center justify-center font-black text-xs">
+                <span style={{
+                  position: 'absolute', top: -4, right: -4,
+                  background: 'rgb(8,255,8)', color: '#000',
+                  borderRadius: '50%', width: 20, height: 20,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, fontWeight: 900,
+                }}>
                   {totalProductos}
                 </span>
               )}
             </button>
-            <button
-              onClick={() => setMenuMovilAbierto(!menuMovilAbierto)}
-              className="p-2.5 text-gray-300 hover:text-[rgb(8,255,8)] transition-colors"
-            >
+            <button className="nav-icon-btn" onClick={() => setMenuMovilAbierto(v => !v)}>
               {menuMovilAbierto ? <FaTimes size={22} /> : <FaBars size={22} />}
             </button>
           </div>
         </div>
 
-        {/* MENÚ MÓVIL */}
+        {/* Menú móvil desplegable */}
         <AnimatePresence>
           {menuMovilAbierto && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="md:hidden bg-gray-950 border-t border-[rgba(8,255,8,0.15)] overflow-hidden"
+              transition={{ duration: 0.22 }}
+              style={{
+                background: '#0a0a0a',
+                borderTop: '1px solid rgba(8,255,8,0.15)',
+                overflow: 'hidden',
+              }}
             >
-              <div className="px-4 py-3 flex flex-col gap-1">
-                <a href="#inicio" onClick={() => setMenuMovilAbierto(false)}
-                  className="px-4 py-3 text-sm font-bold text-white tracking-wide uppercase border-b border-gray-800">
+              <div style={{ padding: '8px 0 12px' }}>
+                {/* Inicio */}
+                <a href="#inicio"
+                  onClick={() => setMenuMovilAbierto(false)}
+                  style={mobileNavLink}>
                   Inicio
                 </a>
 
-                {/* Categorías móvil */}
+                {/* Categorías acordeón */}
                 <div>
                   <button
-                    onClick={() => setMenuCatMovilAbierto(!menuCatMovilAbierto)}
-                    className="w-full flex items-center justify-between px-4 py-3 text-sm font-bold text-white tracking-wide uppercase border-b border-gray-800"
+                    onClick={() => setMenuCatMovilAbierto(v => !v)}
+                    style={{ ...mobileNavLink, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', background: 'none', border: 'none', cursor: 'pointer' }}
                   >
                     <span>Categorías</span>
-                    <FaChevronDown className={`text-[rgb(8,255,8)] text-xs transition-transform ${menuCatMovilAbierto ? 'rotate-180' : ''}`} />
+                    <FaChevronDown style={{
+                      fontSize: 12, color: 'rgb(8,255,8)',
+                      transition: 'transform .2s',
+                      transform: menuCatMovilAbierto ? 'rotate(180deg)' : 'rotate(0)',
+                    }} />
                   </button>
+
                   <AnimatePresence>
                     {menuCatMovilAbierto && (
                       <motion.div
                         initial={{ height: 0 }}
                         animate={{ height: 'auto' }}
                         exit={{ height: 0 }}
-                        className="overflow-hidden bg-black"
+                        style={{ overflow: 'hidden', background: '#000' }}
                       >
-                        {categorias.map((cat) => (
+                        {categorias.map(cat => (
                           <button
                             key={cat.id}
                             onClick={() => seleccionarCategoria(cat.id)}
-                            className={`w-full text-left px-8 py-2.5 text-sm transition
-                              ${categoriaActiva === cat.id ? 'text-[rgb(8,255,8)] font-bold' : 'text-gray-400 hover:text-white'}`}
+                            style={{
+                              display: 'block', width: '100%', textAlign: 'left',
+                              padding: '10px 32px',
+                              fontSize: 13,
+                              fontWeight: categoriaActiva === cat.id ? 700 : 400,
+                              color: categoriaActiva === cat.id ? 'rgb(8,255,8)' : '#888',
+                              background: 'none', border: 'none', cursor: 'pointer',
+                            }}
                           >
                             {cat.nombre}
                           </button>
@@ -257,63 +296,132 @@ function App() {
                   </AnimatePresence>
                 </div>
 
-                <a href="#nosotros" onClick={() => setMenuMovilAbierto(false)}
-                  className="px-4 py-3 text-sm font-bold text-white tracking-wide uppercase border-b border-gray-800">
-                  Nosotros
-                </a>
-                <a href="#contacto" onClick={() => setMenuMovilAbierto(false)}
-                  className="px-4 py-3 text-sm font-bold text-white tracking-wide uppercase">
-                  Contáctanos
-                </a>
+                <a href="#nosotros"  onClick={() => setMenuMovilAbierto(false)} style={mobileNavLink}>Nosotros</a>
+                <a href="#contacto" onClick={() => setMenuMovilAbierto(false)} style={mobileNavLink}>Contáctanos</a>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </nav>
 
-      {/* Espaciador para el navbar fijo */}
-      <div className="h-16" />
+      {/* Espaciador navbar */}
+      <div style={{ height: 64 }} />
 
-      {/* ===== HERO ===== */}
-      <section id="inicio" className="min-h-screen bg-white flex flex-col items-center justify-center px-6">
-        <motion.div className="text-center" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-          <img src="/logo.jpg" alt="Aceros y Lujos" className="w-56 md:w-72 mb-6 mx-auto" />
-          <h1 className="text-4xl md:text-7xl font-black text-black mb-4">INOXIDABLES</h1>
-          <p className="text-lg md:text-2xl text-gray-700 mb-6">Accesorios Premium para Camiones</p>
-          <a
-            href="#productos"
-            className="bg-[rgb(8,255,8)] text-black font-bold px-10 py-5 rounded-full text-lg shadow-2xl 
-                       hover:bg-[rgb(0,220,0)] transition transform hover:scale-105 
-                       shadow-[0_0_30px_rgba(8,255,8,0.7)] glow-button inline-block"
-          >
+      {/* ════════════════════════════════════════
+          HERO
+      ════════════════════════════════════════ */}
+      <section id="inicio" style={{
+        minHeight: 'calc(100vh - 64px)',
+        background: '#fff',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: '40px 24px',
+        textAlign: 'center',
+      }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+          <img src="/logo.jpg" alt="Aceros y Lujos"
+            style={{ width: 'min(280px, 70vw)', marginBottom: 24, borderRadius: 12, objectFit: 'cover' }} />
+          <h1 style={{ fontSize: 'clamp(2.2rem, 8vw, 5rem)', fontWeight: 900, color: '#000', marginBottom: 12, lineHeight: 1.1 }}>
+            INOXIDABLES
+          </h1>
+          <p style={{ fontSize: 'clamp(1rem, 3vw, 1.4rem)', color: '#555', marginBottom: 28 }}>
+            Accesorios Premium para Camiones
+          </p>
+          <a href="#productos" className="glow-button" style={{
+            display: 'inline-block',
+            background: 'rgb(8,255,8)', color: '#000', fontWeight: 800,
+            padding: '16px 40px', borderRadius: 50, fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)',
+            textDecoration: 'none', transition: 'background .2s, transform .2s',
+          }}>
             Ver Catálogo
           </a>
         </motion.div>
       </section>
 
-      {/* ===== PRODUCTOS ===== */}
-      <section id="productos" className="py-10 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl text-center mb-10 font-black text-gray-900">
+      {/* ════════════════════════════════════════
+          PRODUCTOS
+      ════════════════════════════════════════ */}
+      <section id="productos" style={{ padding: '48px 0', background: '#f3f4f6' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 16px' }}>
+          <h2 style={{ textAlign: 'center', marginBottom: 36, fontWeight: 900, fontSize: 'clamp(1.6rem, 4vw, 2.8rem)', color: '#111' }}>
             {categoriaActiva === "todos" ? "Todos los Productos" : categorias.find(c => c.id === categoriaActiva)?.nombre}
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(160px, 45vw), 1fr))',
+            gap: 16,
+          }}>
             {productosFiltrados.map((prod, i) => (
               <motion.div
                 key={prod.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.05 }}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-2"
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.04 }}
+                style={{
+                  background: '#fff', borderRadius: 14,
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                  overflow: 'hidden',
+                  transition: 'transform .2s, box-shadow .2s',
+                  /* ✅ flex column para que el botón siempre quede al fondo */
+                  display: 'flex', flexDirection: 'column',
+                }}
+                whileHover={{ y: -4, boxShadow: '0 8px 28px rgba(0,0,0,0.16)' }}
               >
-                <img src={prod.img} alt={prod.nombre} className="w-full h-32 sm:h-40 object-cover" />
-                <div className="p-3 sm:p-4">
-                  <h3 className="text-sm sm:text-base font-bold text-black line-clamp-2">{prod.nombre}</h3>
-                  <p className="text-black text-lg sm:text-xl font-black mt-2">${prod.precio.toLocaleString()} COP</p>
+                <img src={prod.img} alt={prod.nombre}
+                  style={{ width: '100%', height: 'clamp(120px, 28vw, 170px)', objectFit: 'cover', display: 'block', flexShrink: 0 }} />
+
+                {/* Área de texto + botón — ocupa el espacio restante */}
+                <div style={{
+                  padding: '12px',
+                  display: 'flex', flexDirection: 'column',
+                  flex: 1,           /* ← crece para llenar la tarjeta */
+                }}>
+                  {/* Nombre: altura fija de 2 líneas */}
+                  <h3 style={{
+                    fontSize: 'clamp(0.78rem, 2.6vw, 0.9rem)',
+                    fontWeight: 700, color: '#111',
+                    marginBottom: 6,
+                    /* altura fija equivalente a 2 líneas */
+                    minHeight: '2.6em',
+                    lineHeight: '1.3em',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}>
+                    {prod.nombre}
+                  </h3>
+
+                  {/* Precio: altura fija de 1 línea */}
+                  <p style={{
+                    fontSize: 'clamp(0.92rem, 3vw, 1.05rem)',
+                    fontWeight: 900, color: '#000',
+                    marginBottom: 10,
+                    whiteSpace: 'nowrap',   /* ← evita que el precio salte de línea */
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}>
+                    ${prod.precio.toLocaleString()} COP
+                  </p>
+
+                  {/* Botón empujado al fondo con marginTop: auto */}
                   <button
                     onClick={() => agregarAlCarrito(prod)}
-                    className="w-full bg-[rgb(8,255,8)] text-black font-bold py-2.5 mt-3 rounded-lg text-sm 
-                               hover:bg-[rgb(0,200,0)] transition-all glow-button flex items-center justify-center gap-2"
+                    className="glow-button"
+                    style={{
+                      marginTop: 'auto',   /* ← siempre al fondo sin importar el texto */
+                      width: '100%',
+                      background: 'rgb(8,255,8)', color: '#000',
+                      fontWeight: 700,
+                      padding: '11px 0',
+                      borderRadius: 8, border: 'none',
+                      fontSize: 'clamp(0.78rem, 2.2vw, 0.88rem)',
+                      cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                      transition: 'background .15s',
+                      flexShrink: 0,
+                    }}
                   >
                     <FaShoppingCart /> Añadir
                   </button>
@@ -324,91 +432,162 @@ function App() {
         </div>
       </section>
 
-      {/* ===== SOBRE NOSOTROS ===== */}
-      <section id="nosotros" className="py-16 bg-black text-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-5xl font-black mb-6">
-            Sobre <span className="text-[rgb(8,255,8)]">Nosotros</span>
+      {/* ════════════════════════════════════════
+          SOBRE NOSOTROS
+      ════════════════════════════════════════ */}
+      <section id="nosotros" style={{ padding: '64px 24px', background: '#000', color: '#fff', textAlign: 'center' }}>
+        <div style={{ maxWidth: 760, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 900, marginBottom: 20 }}>
+            Sobre <span style={{ color: 'rgb(8,255,8)' }}>Nosotros</span>
           </h2>
-          <p className="text-gray-300 text-lg leading-relaxed mb-4">
-            Somos <strong className="text-white">Aceros y Lujos</strong>, especializados en accesorios inoxidables premium para camiones. Con años de experiencia en el mercado colombiano, fabricamos y distribuimos productos de la más alta calidad.
+          <p style={{ color: '#ccc', fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)', lineHeight: 1.8, marginBottom: 16 }}>
+            Somos <strong style={{ color: '#fff' }}>Aceros y Lujos</strong>, especializados en accesorios inoxidables premium para camiones.
+            Con años de experiencia en el mercado colombiano, fabricamos y distribuimos productos de la más alta calidad.
           </p>
-          <p className="text-gray-400 leading-relaxed">
+          <p style={{ color: '#888', fontSize: 'clamp(0.9rem, 2vw, 1rem)', lineHeight: 1.7 }}>
             Ubicados en Soledad, Atlántico. Cada pieza está diseñada para durar y darle a tu vehículo el estilo que merece.
           </p>
         </div>
       </section>
 
-      {/* ===== CONTÁCTANOS ===== */}
-      <section id="contacto" className="py-16 bg-gray-900 text-white">
-        <div className="max-w-2xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-5xl font-black mb-6">
-            <span className="text-[rgb(8,255,8)]">Contáctanos</span>
+      {/* ════════════════════════════════════════
+          CONTÁCTANOS
+      ════════════════════════════════════════ */}
+      <section id="contacto" style={{ padding: '64px 24px', background: '#111', color: '#fff', textAlign: 'center' }}>
+        <div style={{ maxWidth: 600, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 900, marginBottom: 16 }}>
+            <span style={{ color: 'rgb(8,255,8)' }}>Contáctanos</span>
           </h2>
-          <p className="text-gray-300 mb-8 text-lg">¿Tienes alguna pregunta? Escríbenos por WhatsApp y con gusto te atendemos.</p>
+          <p style={{ color: '#aaa', fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)', marginBottom: 32 }}>
+            ¿Tienes alguna pregunta? Escríbenos por WhatsApp y con gusto te atendemos.
+          </p>
           <a
             href="https://wa.me/573005968323"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-[rgb(8,255,8)] text-black font-bold px-10 py-5 rounded-full text-lg glow-button hover:bg-[rgb(0,200,0)] transition"
+            className="glow-button"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              background: 'rgb(8,255,8)', color: '#000',
+              fontWeight: 800, padding: '16px 36px', borderRadius: 50,
+              fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)', textDecoration: 'none',
+            }}
           >
-            <FaWhatsapp size={26} /> Escribir al WhatsApp
+            <FaWhatsapp size={24} /> Escribir al WhatsApp
           </a>
-          <p className="text-gray-500 mt-6 text-sm">📍 Soledad, Atlántico, Colombia</p>
+          <p style={{ color: '#555', marginTop: 24, fontSize: 13 }}>📍 Soledad, Atlántico, Colombia</p>
         </div>
       </section>
 
-      {/* ===== MODAL CARRITO ===== */}
+      {/* ════════════════════════════════════════
+          MODAL CARRITO
+      ════════════════════════════════════════ */}
       <AnimatePresence>
         {carritoAbierto && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-end"
             onClick={() => setCarritoAbierto(false)}
+            style={{
+              position: 'fixed', inset: 0,
+              background: 'rgba(0,0,0,0.75)',
+              zIndex: 2000,
+              display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+            }}
           >
             <motion.div
-              initial={{ y: "100%" }}
+              initial={{ y: '100%' }}
               animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 30 }}
-              className="bg-white w-full max-w-lg rounded-t-3xl p-5 max-h-[80vh] overflow-y-auto mx-auto"
-              onClick={(e) => e.stopPropagation()}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30 }}
+              onClick={e => e.stopPropagation()}
+              style={{
+                background: '#fff',
+                width: '100%', maxWidth: 520,
+                borderRadius: '24px 24px 0 0',
+                padding: '24px 20px',
+                maxHeight: '82vh',
+                overflowY: 'auto',
+              }}
             >
-              <h3 className="text-2xl font-black text-[rgb(8,255,8)] mb-4 text-center drop-shadow glow-text">
+              {/* Drag handle */}
+              <div style={{ width: 40, height: 4, background: '#ddd', borderRadius: 4, margin: '0 auto 20px' }} />
+
+              <h3 style={{
+                textAlign: 'center', fontWeight: 900,
+                fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
+                color: 'rgb(8,255,8)', marginBottom: 20,
+                textShadow: '0 0 15px rgba(8,255,8,0.7)',
+              }}>
                 Mi Pedido ({totalProductos})
               </h3>
+
               {carrito.length === 0 ? (
-                <p className="text-center text-gray-500 py-10 text-lg">Tu carrito está vacío</p>
+                <p style={{ textAlign: 'center', color: '#999', padding: '40px 0', fontSize: 15 }}>
+                  Tu carrito está vacío
+                </p>
               ) : (
                 <>
-                  {carrito.map((item) => (
-                    <div key={item.id} className="flex gap-4 mb-5 pb-4 border-b">
-                      <img src={item.img} alt={item.nombre} className="w-20 h-20 object-cover rounded" />
-                      <div className="flex-grow">
-                        <h4 className="font-semibold text-sm">{item.nombre}</h4>
-                        <p className="text-black font-bold text-lg">${(item.precio * item.cantidad).toLocaleString()} COP</p>
+                  {carrito.map(item => (
+                    <div key={item.id} style={{
+                      display: 'flex', gap: 12, marginBottom: 20,
+                      paddingBottom: 20, borderBottom: '1px solid #eee', alignItems: 'flex-start',
+                    }}>
+                      <img src={item.img} alt={item.nombre}
+                        style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontWeight: 600, fontSize: 13, color: '#222', marginBottom: 4,
+                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {item.nombre}
+                        </p>
+                        <p style={{ fontWeight: 900, fontSize: 'clamp(0.95rem, 3vw, 1.1rem)', color: '#000' }}>
+                          ${(item.precio * item.cantidad).toLocaleString()} COP
+                        </p>
                       </div>
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="flex items-center gap-2">
-                          <button onClick={() => cambiarCantidad(item.id, -1)} className="bg-gray-200 p-2 rounded"><FaMinus /></button>
-                          <span className="font-bold w-8 text-center">{item.cantidad}</span>
-                          <button onClick={() => cambiarCantidad(item.id, 1)} className="bg-[rgb(8,255,8)] text-black p-2 rounded hover:bg-[rgb(0,200,0)]"><FaPlus /></button>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <button onClick={() => cambiarCantidad(item.id, -1)}
+                            style={{ background: '#f0f0f0', border: 'none', borderRadius: 6, padding: '6px 8px', cursor: 'pointer' }}>
+                            <FaMinus size={12} />
+                          </button>
+                          <span style={{ fontWeight: 700, minWidth: 24, textAlign: 'center', fontSize: 14 }}>
+                            {item.cantidad}
+                          </span>
+                          <button onClick={() => cambiarCantidad(item.id, 1)}
+                            style={{ background: 'rgb(8,255,8)', border: 'none', borderRadius: 6, padding: '6px 8px', cursor: 'pointer' }}>
+                            <FaPlus size={12} />
+                          </button>
                         </div>
-                        <button onClick={() => eliminarDelCarrito(item.id)} className="text-red-600"><FaTrash /></button>
+                        <button onClick={() => eliminarDelCarrito(item.id)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#e53e3e' }}>
+                          <FaTrash size={14} />
+                        </button>
                       </div>
                     </div>
                   ))}
-                  <div className="mt-5 pt-4 border-t text-xl font-black flex justify-between">
+
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    padding: '16px 0', borderTop: '2px solid #eee',
+                    fontWeight: 900, fontSize: 'clamp(1rem, 3vw, 1.2rem)', color: '#000',
+                  }}>
                     <span>Total:</span>
-                    <span className="text-black">${total.toLocaleString()} COP</span>
+                    <span>${total.toLocaleString()} COP</span>
                   </div>
+
                   <button
                     onClick={enviarAWhatsApp}
-                    className="w-full bg-[rgb(8,255,8)] text-black font-bold py-5 rounded-full mt-5 flex items-center justify-center gap-3 text-lg glow-button hover:bg-[rgb(0,200,0)] transition"
+                    className="glow-button"
+                    style={{
+                      width: '100%', background: 'rgb(8,255,8)', color: '#000',
+                      fontWeight: 800, padding: '16px', borderRadius: 50, border: 'none',
+                      fontSize: 'clamp(0.95rem, 3vw, 1.05rem)', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                      marginTop: 16,
+                    }}
                   >
-                    <FaWhatsapp size={28} /> Enviar Pedido por WhatsApp
+                    <FaWhatsapp size={24} /> Enviar Pedido por WhatsApp
                   </button>
                 </>
               )}
@@ -417,25 +596,99 @@ function App() {
         )}
       </AnimatePresence>
 
-      <style jsx>{`
-        .glow-button {
-          box-shadow: 0 0 30px rgba(8, 255, 8, 0.8);
-          animation: neon-pulse 1.8s infinite alternate;
-        }
-        .glow-text {
-          text-shadow: 0 0 15px rgba(8, 255, 8, 0.9);
-        }
-        @keyframes neon-pulse {
-          from { box-shadow: 0 0 20px rgba(8, 255, 8, 0.7); }
-          to { box-shadow: 0 0 40px rgba(8, 255, 8, 1), 0 0 60px rgba(8, 255, 8, 0.6); }
-        }
-      `}</style>
-
-      <footer className="py-8 bg-black text-white text-center text-sm border-t border-[rgba(8,255,8,0.15)]">
+      {/* ════════════════════════════════════════
+          FOOTER
+      ════════════════════════════════════════ */}
+      <footer style={{
+        padding: '28px 16px', background: '#000', color: '#555',
+        textAlign: 'center', fontSize: 13,
+        borderTop: '1px solid rgba(8,255,8,0.12)',
+      }}>
         © 2025 Aceros y Lujos • Soledad, Colombia
       </footer>
+
+      {/* ════════════════════════════════════════
+          ESTILOS GLOBALES
+      ════════════════════════════════════════ */}
+      <style>{`
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          -webkit-text-size-adjust: 100%;
+          overflow-x: hidden;
+        }
+
+        /* Viewport fix para móviles con notch / barra del sistema */
+        @supports (padding: max(0px)) {
+          nav { padding-left: max(0px, env(safe-area-inset-left)); padding-right: max(0px, env(safe-area-inset-right)); }
+          footer { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+        }
+
+        /* Clases responsive del navbar */
+        .nav-desktop { display: flex !important; }
+        .nav-mobile  { display: none !important; }
+
+        @media (max-width: 767px) {
+          .nav-desktop { display: none !important; }
+          .nav-mobile  { display: flex !important; }
+        }
+
+        .nav-link {
+          padding: 8px 14px;
+          font-size: 13px; font-weight: 700;
+          color: #fff;
+          text-decoration: none;
+          letter-spacing: 0.06em; text-transform: uppercase;
+          transition: color .15s;
+          white-space: nowrap;
+        }
+        .nav-link:hover { color: rgb(8,255,8); }
+
+        .nav-icon-btn {
+          background: none; border: none; cursor: pointer;
+          color: #888;
+          padding: 8px; border-radius: 8px;
+          display: flex; align-items: center; justify-content: center;
+          transition: color .15s, background .15s;
+          position: relative;
+        }
+        .nav-icon-btn:hover { color: rgb(8,255,8); background: rgba(8,255,8,0.08); }
+
+        .glow-button {
+          box-shadow: 0 0 24px rgba(8,255,8,0.7);
+          animation: neon-pulse 1.8s infinite alternate;
+        }
+        .glow-button:hover { background: rgb(0,220,0) !important; }
+
+        @keyframes neon-pulse {
+          from { box-shadow: 0 0 18px rgba(8,255,8,0.65); }
+          to   { box-shadow: 0 0 36px rgba(8,255,8,1), 0 0 55px rgba(8,255,8,0.5); }
+        }
+
+        /* Touch tap highlight */
+        button, a { -webkit-tap-highlight-color: transparent; }
+
+        /* Scrollbar dentro del carrito */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(8,255,8,0.4); border-radius: 4px; }
+      `}</style>
     </>
   );
 }
+
+/* Estilo base para links de nav móvil */
+const mobileNavLink = {
+  display: 'block',
+  padding: '13px 20px',
+  fontSize: 14, fontWeight: 700,
+  color: '#fff',
+  textDecoration: 'none',
+  letterSpacing: '0.05em', textTransform: 'uppercase',
+  borderBottom: '1px solid rgba(255,255,255,0.06)',
+};
 
 export default App;

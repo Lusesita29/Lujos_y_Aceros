@@ -1,5 +1,5 @@
 // src/data/testimonials.js
-export const testimonios = [
+export const testimonials = [
   {
     id: 1,
     nombre: "Carlos Ramírez",

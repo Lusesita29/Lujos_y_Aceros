@@ -101,3 +101,28 @@ export const marcasVehiculos = {
   Kenworth: ["T800", "T680", "W900"],
   Freightliner: ["Cascadia", "Columbia"],
 };
+
+// Testimonios de clientes — reemplaza estos textos y nombres por los reales cuanto los tengan
+export const testimonios = [
+  {
+    id: 1,
+    nombre: "Carlos Martínez",
+    ciudad: "Barranquilla",
+    texto: "Excelente calidad en los accesorios, el acero inoxidable se nota que es de primera. Ya llevo dos compras y el acabado sigue impecable.",
+    estrellas: 5,
+  },
+  {
+    id: 2,
+    nombre: "Luis Fernández",
+    ciudad: "Soledad",
+    texto: "Pedí una defensa a medida para mi Kenworth y quedó perfecta. Buena asesoría por WhatsApp y entrega a tiempo.",
+    estrellas: 5,
+  },
+  {
+    id: 3,
+    nombre: "Andrea Gómez",
+    ciudad: "Cartagena",
+    texto: "Muy buena atención y los productos llegaron bien empacados. Se ve que trabajan con materiales de calidad, no genéricos.",
+    estrellas: 5,
+  },
+];

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
 
@@ -20,17 +21,21 @@ export default function ProductCard({ producto, index = 0 }) {
       }}
       whileHover={{ y: -4, boxShadow: '0 8px 28px rgba(0,0,0,0.16)' }}
     >
-      <img src={producto.img} alt={producto.nombre}
-        style={{ width: '100%', height: 'clamp(120px, 28vw, 170px)', objectFit: 'cover', display: 'block', flexShrink: 0 }} />
+      <Link to={`/producto/${producto.id}`} style={{ display: 'block' }}>
+        <img src={producto.img} alt={producto.nombre}
+          style={{ width: '100%', height: 'clamp(120px, 28vw, 170px)', objectFit: 'cover', display: 'block', flexShrink: 0 }} />
+      </Link>
 
       <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <h3 style={{
-          fontSize: 'clamp(0.78rem, 2.6vw, 0.9rem)', fontWeight: 700, color: '#111', marginBottom: 6,
-          minHeight: '2.6em', lineHeight: '1.3em',
-          display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-        }}>
-          {producto.nombre}
-        </h3>
+        <Link to={`/producto/${producto.id}`} style={{ textDecoration: 'none' }}>
+          <h3 style={{
+            fontSize: 'clamp(0.78rem, 2.6vw, 0.9rem)', fontWeight: 700, color: '#111', marginBottom: 6,
+            minHeight: '2.6em', lineHeight: '1.3em',
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+          }}>
+            {producto.nombre}
+          </h3>
+        </Link>
 
         <p style={{
           fontSize: 'clamp(0.92rem, 3vw, 1.05rem)', fontWeight: 900, color: '#000', marginBottom: 10,

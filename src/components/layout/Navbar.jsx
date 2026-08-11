@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaShoppingCart, FaChevronDown, FaBars, FaTimes } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
@@ -12,6 +13,7 @@ const mobileNavLink = {
   textDecoration: 'none',
   letterSpacing: '0.05em', textTransform: 'uppercase',
   borderBottom: '1px solid rgba(255,255,255,0.06)',
+  background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer',
 };
 
 export default function Navbar({ categoriaActiva, onSeleccionarCategoria }) {
@@ -20,6 +22,8 @@ export default function Navbar({ categoriaActiva, onSeleccionarCategoria }) {
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false);
   const [menuCatMovilAbierto, setMenuCatMovilAbierto] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handler = (e) => {
@@ -34,12 +38,28 @@ export default function Navbar({ categoriaActiva, onSeleccionarCategoria }) {
     return () => { document.body.style.overflow = ''; };
   }, [menuMovilAbierto]);
 
+  // Navega a una sección del Home ("inicio", "productos", "nosotros", "contacto").
+  // Si ya estamos en "/", solo hace scroll. Si estamos en otra ruta (ej. /producto/5),
+  // primero navega a "/" pasando el id por state, y Home.jsx se encarga de hacer scroll
+  // una vez que la página cargó.
+  const irASeccion = (seccionId) => {
+    if (location.pathname === '/') {
+      if (seccionId === 'inicio') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        document.getElementById(seccionId)?.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      navigate('/', { state: { scrollTo: seccionId } });
+    }
+  };
+
   const seleccionar = (catId) => {
     onSeleccionarCategoria(catId);
     setCategoriaDropdown(false);
     setMenuMovilAbierto(false);
     setMenuCatMovilAbierto(false);
-    setTimeout(() => document.getElementById('productos')?.scrollIntoView({ behavior: 'smooth' }), 100);
+    setTimeout(() => irASeccion('productos'), 100);
   };
 
   return (
@@ -53,12 +73,12 @@ export default function Navbar({ categoriaActiva, onSeleccionarCategoria }) {
         maxWidth: 1280, margin: '0 auto', padding: '0 16px', height: 64,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
       }}>
-        <a href="#inicio" style={{ display: 'flex', alignItems: 'center', flexShrink: 0, textDecoration: 'none' }}>
+        <button onClick={() => irASeccion('inicio')} style={{ display: 'flex', alignItems: 'center', flexShrink: 0, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
           <img src="/logo.jpg" alt="Aceros y Lujos" style={{ height: 44, width: 'auto', borderRadius: 6, objectFit: 'cover' }} />
-        </a>
+        </button>
 
         <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, justifyContent: 'center' }}>
-          <a href="#inicio" className="nav-link">Inicio</a>
+          <button onClick={() => irASeccion('inicio')} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Inicio</button>
 
           <div ref={dropdownRef} style={{ position: 'relative' }}>
             <button
@@ -108,8 +128,8 @@ export default function Navbar({ categoriaActiva, onSeleccionarCategoria }) {
             </AnimatePresence>
           </div>
 
-          <a href="#nosotros" className="nav-link">Nosotros</a>
-          <a href="#contacto" className="nav-link">Contáctanos</a>
+          <button onClick={() => irASeccion('nosotros')} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Nosotros</button>
+          <button onClick={() => irASeccion('contacto')} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Contáctanos</button>
         </div>
 
         <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -132,12 +152,12 @@ export default function Navbar({ categoriaActiva, onSeleccionarCategoria }) {
             style={{ background: '#0a0a0a', borderTop: '1px solid rgba(8,255,8,0.15)', overflow: 'hidden' }}
           >
             <div style={{ padding: '8px 0 12px' }}>
-              <a href="#inicio" onClick={() => setMenuMovilAbierto(false)} style={mobileNavLink}>Inicio</a>
+              <button onClick={() => { irASeccion('inicio'); setMenuMovilAbierto(false); }} style={mobileNavLink}>Inicio</button>
 
               <div>
                 <button
                   onClick={() => setMenuCatMovilAbierto(v => !v)}
-                  style={{ ...mobileNavLink, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', background: 'none', border: 'none', cursor: 'pointer' }}
+                  style={{ ...mobileNavLink, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                 >
                   <span>Categorías</span>
                   <FaChevronDown style={{
@@ -171,8 +191,8 @@ export default function Navbar({ categoriaActiva, onSeleccionarCategoria }) {
                 </AnimatePresence>
               </div>
 
-              <a href="#nosotros" onClick={() => setMenuMovilAbierto(false)} style={mobileNavLink}>Nosotros</a>
-              <a href="#contacto" onClick={() => setMenuMovilAbierto(false)} style={mobileNavLink}>Contáctanos</a>
+              <button onClick={() => { irASeccion('nosotros'); setMenuMovilAbierto(false); }} style={mobileNavLink}>Nosotros</button>
+              <button onClick={() => { irASeccion('contacto'); setMenuMovilAbierto(false); }} style={mobileNavLink}>Contáctanos</button>
             </div>
           </motion.div>
         )}

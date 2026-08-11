@@ -9,7 +9,7 @@ import Testimonials from "../components/home/Testimonials";
 import Contact from "../components/home/Contact";
 import Footer from "../components/layout/Footer";
 import WhatsAppButton from "../components/layout/WhatsAppButton";
-import { products } from "../data/products";
+import { productos } from "../data/products";
 
 export default function Home() {
   const destacados = products.filter((p) => p.destacado).slice(0, 4);

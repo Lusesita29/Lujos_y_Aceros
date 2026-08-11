@@ -16,6 +16,7 @@ export const productos = [
   {
     id: 1,
     nombre: "Retrovisores Cromados",
+    destacado: true,
     precio: 850000,
     img: "/retro.jpg",
     categoria: "retrovisores y regletas",
@@ -47,6 +48,7 @@ export const productos = [
   {
     id: 2,
     nombre: "Retrovisor 60 cm",
+    destacado: true,
     precio: 380000,
     img: "/retro2.jpg",
     categoria: "retrovisores y regletas",
@@ -75,6 +77,7 @@ export const productos = [
   {
     id: 3,
     nombre: "Regleta LED Azul",
+    destacado: true,
     precio: 450000,
     img: "/retro3.jpg",
     categoria: "retrovisores y regletas",
@@ -103,6 +106,7 @@ export const productos = [
   {
     id: 4,
     nombre: "Defensa Delantera LED",
+    destacado: true,
     precio: 1950000,
     img: "/defensa.jpg",
     categoria: "defensas",

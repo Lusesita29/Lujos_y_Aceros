@@ -35,7 +35,7 @@ export function CartProvider({ children }) {
     carrito.forEach(i => {
       msg += `• ${i.nombre}\n  Cantidad: ${i.cantidad} → $${(i.precio * i.cantidad).toLocaleString()} COP\n\n`;
     });
-    msg += `─────────────────\n*TOTAL: $${total.toLocaleString()} COP*\n\n¡Gracias!`;
+    msg += `───────────────\n*TOTAL: $${total.toLocaleString()} COP*\n\n¡Gracias!`;
     window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 

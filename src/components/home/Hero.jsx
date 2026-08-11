@@ -1,51 +1,30 @@
-import { motion } from "framer-motion";
-
 export default function Hero() {
   return (
-    <section
-      style={{
-        minHeight: "90vh",
-        display: "flex",
-        alignItems: "center",
-        background:
-          "linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)), url('/camion.jpg') center/cover",
-        color: "#fff",
-      }}
-    >
-      <div style={{ maxWidth: 1200, margin: "auto", padding: 20 }}>
+    <section className="min-h-[80vh] flex flex-col items-center justify-center text-center px-6 bg-gray-900 text-white">
+      <h1 className="text-4xl md:text-6xl font-bold tracking-wide">
+        ACCESORIOS INOXIDABLES PREMIUM
+      </h1>
+      <p className="mt-4 text-lg md:text-xl text-gray-300">
+        Diseñados para destacar. Fabricados para durar.
+      </p>
+      <p className="mt-2 max-w-xl text-gray-400">
+        Calidad y diseño en cada pieza. Accesorios premium para transformar
+        la apariencia y funcionalidad de tu vehículo.
+      </p>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+      <div className="mt-8 flex gap-4 flex-col sm:flex-row">
+        <a
+          href="#productos"
+          className="bg-white text-gray-900 font-semibold px-8 py-3 rounded-full hover:bg-gray-200 transition"
         >
-          ACCESORIOS PREMIUM PARA CAMIONES
-        </motion.p>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: .15 }}
-          style={{
-            fontSize: "clamp(2.5rem, 7vw, 5.5rem)",
-            fontWeight: 900,
-            maxWidth: 850
-          }}
+          VER PRODUCTOS
+        </a>
+        <a
+          href="#contacto"
+          className="border border-white px-8 py-3 rounded-full hover:bg-white hover:text-gray-900 transition"
         >
-          Diseñados para resistir.
-          <br />
-          Fabricados para destacar.
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: .3 }}
-          style={{ maxWidth: 600 }}
-        >
-          Accesorios inoxidables de alta calidad
-          para darle a tu camión el estilo que merece.
-        </motion.p>
-
+          COTIZAR
+        </a>
       </div>
     </section>
   );

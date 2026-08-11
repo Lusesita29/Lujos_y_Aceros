@@ -1,43 +1,41 @@
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Hero from '../components/home/Hero';
-import ProductGrid from '../components/products/ProductGrid';
-import Testimonials from '../components/home/Testimonials';
-import About from '../components/home/About';
-import Contact from '../components/home/Contact';
+import Navbar from "../components/layout/Navbar";
+import Hero from "../components/home/Hero";
+import Stats from "../components/home/Stats";
+import ProductGrid from "../components/products/ProductGrid";
+import Features from "../components/home/Features";
+import Gallery from "../components/home/Gallery";
+import About from "../components/home/About";
+import Testimonials from "../components/home/Testimonials";
+import Contact from "../components/home/Contact";
+import Footer from "../components/layout/Footer";
+import WhatsAppButton from "../components/layout/WhatsAppButton";
+import { products } from "../data/products";
 
-// categoriaActiva se recibe desde App.jsx porque el Navbar (que vive fuera de esta
-// página, para que sea persistente entre rutas) también necesita saber cuál está activa.
-export default function Home({ categoriaActiva }) {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  // Si llegamos aquí desde otra página con un destino de scroll pendiente
-  // (ej. el usuario hizo clic en "Nosotros" estando en la ficha de un producto),
-  // esperamos a que el DOM esté listo y bajamos a esa sección.
-  useEffect(() => {
-    const seccionId = location.state?.scrollTo;
-    if (seccionId) {
-      const timer = setTimeout(() => {
-        if (seccionId === 'inicio') {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          document.getElementById(seccionId)?.scrollIntoView({ behavior: 'smooth' });
-        }
-        // Limpiamos el state para que un refresh de la página no vuelva a hacer scroll
-        navigate(location.pathname, { replace: true, state: {} });
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [location.state]);
+export default function Home() {
+  const destacados = products.filter((p) => p.destacado).slice(0, 4);
 
   return (
     <>
+      <Navbar />
       <Hero />
-      <ProductGrid categoriaActiva={categoriaActiva} />
-      <Testimonials />
-      <About />
-      <Contact />
+      <Stats />
+
+      <section id="productos" className="py-16 px-6 md:px-12">
+        <h2 className="text-3xl font-bold text-center mb-10">
+          PRODUCTOS DESTACADOS
+        </h2>
+        <ProductGrid products={destacados} />
+        <div className="text-center mt-8">
+          <a
+            href="/productos"
+            className="inline-block border border-gray-800 px-6 py-2 rounded-full hover:bg-gray-800 hover:text-white transition"
+          >
+            VER TODO
+          </a>
+        </div>
+      </section>
+
+      <><Features /><Gallery /><About /><Testimonials /><Contact /><Footer /><WhatsAppButton /></>
     </>
   );
 }

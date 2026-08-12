@@ -37,15 +37,6 @@ export default function Hero() {
         "Diseñados para destacar. Fabricados para durar."
       </motion.p>
 
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.25 }}
-        style={{ marginTop: 10, maxWidth: 560, color: '#999', fontSize: '0.95rem', lineHeight: 1.6 }}
-      >
-        Calidad y diseño en cada pieza. Accesorios premium para transformar la apariencia y funcionalidad de tu vehículo.
-      </motion.p>
-
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

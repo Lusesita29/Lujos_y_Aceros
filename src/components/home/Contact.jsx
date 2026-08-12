@@ -1,6 +1,6 @@
 import { FaWhatsapp } from 'react-icons/fa';
 
-export default function Contact({ numero = "573005968323" }) {
+export default function Contact({ numero = "573005968323", mensaje = "Hola, quiero información sobre sus accesorios" }) {
   return (
     <section id="contacto" style={{ padding: '64px 24px', background: '#111', color: '#fff', textAlign: 'center' }}>
       <div style={{ maxWidth: 600, margin: '0 auto' }}>

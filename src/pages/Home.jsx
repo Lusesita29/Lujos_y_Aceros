@@ -8,7 +8,6 @@ import About from "../components/home/About";
 import Testimonials from "../components/home/Testimonials";
 import Contact from "../components/home/Contact";
 import Footer from "../components/layout/Footer";
-import WhatsAppButton from "../components/layout/WhatsAppButton";
 
 export default function Home() {
   return (

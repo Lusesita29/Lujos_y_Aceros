@@ -1,3 +1,4 @@
+import {useState} from "react";
 import Navbar from "../components/layout/Navbar";
 import Hero from "../components/home/Hero";
 import Stats from "../components/home/Stats";
@@ -10,12 +11,21 @@ import Contact from "../components/home/Contact";
 import Footer from "../components/layout/Footer";
 
 export default function Home() {
+  const [categoriaActiva, setCategoriaActiva] = useState(null);
+
   return (
     <>
-      <Navbar />
-      <Hero />
+      <Navbar
+        categoriaActiva={categoriaActiva}
+        onSeleccionarCategoria={setCategoriaActiva}
+      />
+
+      <Hero onVerProductos={() => setCategoriaActiva("todos")} />
+
       <Stats />
-      <ProductGrid categoriaActiva="todos" />
+
+      {categoriaActiva && <ProductGrid categoriaActiva={categoriaActiva} />}
+
       <Features />
       <Gallery />
       <About />

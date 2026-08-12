@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { color, motion } from 'framer-motion';
 
 const stats = [
   { number: "+10", label: "AÑOS" },
@@ -9,7 +9,7 @@ const stats = [
 export default function Stats() {
   return (
     <section style={{
-      padding: '48px 24px', background: '#000',
+      padding: '48px 24px', background: '#111111',
       borderTop: '1px solid #222', borderBottom: '1px solid #222',
     }}>
       <div style={{

@@ -6,7 +6,7 @@ export default function Hero() {
     <section style={{
       minHeight: '80vh', display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-      padding: '24px', background: '#f2f3f5', color: '#111',
+      padding: '24px', background: '#ffffff', color: '#111',
     }}>
       <motion.img
         src={logo}

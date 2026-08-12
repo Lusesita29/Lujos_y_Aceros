@@ -6,7 +6,7 @@ export default function Hero({ onVerProductos }) {
     <section style={{
       minHeight: '80vh', display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-      padding: '24px', background: '#121212', color: '#fff',
+      padding: '24px', background: '#fefefe', color: '#fff',
     }}>
       <motion.img
         src={logo}

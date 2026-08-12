@@ -96,7 +96,7 @@ export default function ProductCard({
           style={{
             marginTop: 'auto',
             width: '100%',
-            background: 'rgb(8,255,8)',
+            background: '#08b408',
             color: '#000',
             fontWeight: 700,
             padding: '11px 0',
